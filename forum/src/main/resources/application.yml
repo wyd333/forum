@@ -1,0 +1,16 @@
+spring:
+  application:
+    name: 论坛系统
+
+
+server:
+  port: 1224
+
+logging:
+  level:
+    root: info  # 日志的默认级别
+    com.learnings.forum: debug  # 指定包下的日志级别
+  file:
+    path: D:/ASSIGNMENT/code/log-forum  # 反斜杠需要转译，故用斜杠表示
+  pattern:
+    dateformat: MM-dd HH:mm:ss  # 日期的显示格式
