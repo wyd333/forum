@@ -1,5 +1,8 @@
 package com.learnings.forum.controller;
 
+import com.learnings.forum.common.AppResult;
+import com.learnings.forum.exception.ApplicationException;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -18,5 +21,15 @@ public class TestController {
     @RequestMapping("/hello")
     public String hello(){
         return "hello, Spring Boot!";
+    }
+
+    @GetMapping("/exception")
+    public AppResult testException() throws Exception {
+        throw new Exception("这是一个异常");
+    }
+
+    @GetMapping("/app_exception")
+    public AppResult testApplicationException() throws Exception {
+        throw new ApplicationException("这是一个application异常");
     }
 }
