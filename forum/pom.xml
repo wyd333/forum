@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.7.16</version>
+        <version>2.7.6</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.learnings</groupId>
@@ -24,6 +24,14 @@
         <maven.compiler.target>${java.version}</maven.compiler.target>
         <!-- 构建项目指定编码集 -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <!-- 数据库驱动 -->
+        <mysql-connector.version>5.1.49</mysql-connector.version>
+        <!-- Mybatis依赖-->
+        <mybatis-starter.version>2.3.0</mybatis-starter.version>
+        <!-- 数据源 -->
+        <druid-starter.version>1.2.16</druid-starter.version>
+        <!-- Mybatis generator-->
+        <mybatis-generator-plugin-version>1.4.1</mybatis-generator-plugin-version>
     </properties>
 
 
@@ -50,7 +58,31 @@
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
+
+        <!-- Mysql驱动 -->
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>${mysql-connector.version}</version>
+        </dependency>
+
+        <!-- Mybatis 依赖-->
+        <dependency>
+            <groupId>org.mybatis.spring.boot</groupId>
+            <artifactId>mybatis-spring-boot-starter</artifactId>
+            <version>${mybatis-starter.version}</version>
+        </dependency>
+
+        <!-- 数据源 -->
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>druid-spring-boot-starter</artifactId>
+            <version>${druid-starter.version}</version>
+        </dependency>
+
     </dependencies>
+
+
 
     <build>
         <plugins>
@@ -64,6 +96,33 @@
                             <artifactId>lombok</artifactId>
                         </exclude>
                     </excludes>
+                </configuration>
+            </plugin>
+
+            <!-- mybatis 生成器插件 -->
+            <plugin>
+                <groupId>org.mybatis.generator</groupId>
+                <artifactId>mybatis-generator-maven-plugin</artifactId>
+                <version>${mybatis-generator-plugin-version}</version>
+                <executions>
+                    <execution>
+                        <id>Generate MyBatis Artifacts</id>
+                        <phase>deploy</phase>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <!-- 相关配置 -->
+                <configuration>
+                    <!-- 打开日志 -->
+                    <verbose>true</verbose>
+                    <!-- 允许覆盖 -->
+                    <overwrite>true</overwrite>
+                    <!-- 配置文件路径 -->
+                    <configurationFile>
+                        src/main/resources/mybatis/generatorConfig.xml
+                    </configurationFile>
                 </configuration>
             </plugin>
         </plugins>

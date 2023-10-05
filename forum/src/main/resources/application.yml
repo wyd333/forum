@@ -1,7 +1,15 @@
 spring:
   application:
     name: 论坛系统
+  datasource:   # 配置数据源
+    url: jdbc:mysql://127.0.0.1:3307/forum_db?characterEncoding=utf8&useSSL=false  # 数据库连接串
+    username: root
+    password: 000000
+    driver-class-name: com.mysql.jdbc.Driver # 数据库连接驱动
 
+# mybatis 相关配置，单独配置，顶格写
+mybatis:
+  mapper-locations: classpath:mapper/**/*.xml   # 指定 xxxMapper.xml的扫描路径
 
 server:
   port: 1224
