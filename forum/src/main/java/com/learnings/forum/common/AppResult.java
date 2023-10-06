@@ -32,6 +32,10 @@ public class AppResult<T> {
     }
 
     /**
+     * 提供一些static方法供调用方使用
+     */
+
+    /**
      * 成功
      * @return
      */

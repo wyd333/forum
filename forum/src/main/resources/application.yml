@@ -6,6 +6,9 @@ spring:
     username: root
     password: 000000
     driver-class-name: com.mysql.jdbc.Driver # 数据库连接驱动
+  mvc:
+    pathmatch:
+      matching-strategy: ANT_PATH_MATCHER #Springfox-Swagger兼容性配置
 
 # mybatis 相关配置，单独配置，顶格写
 mybatis:
