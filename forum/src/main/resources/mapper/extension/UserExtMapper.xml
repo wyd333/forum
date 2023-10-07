@@ -14,7 +14,7 @@
         from t_user
         where
         deleteState = 0
-        AND
+        and
         username = #{username,jdbcType=VARCHAR}
     </select>
 
