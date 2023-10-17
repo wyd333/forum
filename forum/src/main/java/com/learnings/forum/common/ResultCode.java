@@ -9,7 +9,7 @@ package com.learnings.forum.common;
  */
 public enum ResultCode {
 //    定义状态码
-    SUCCESS                         (0, "成功"),
+    SUCCESS                         (0, "操作成功"),
     FAILED                          (1000, "操作失败"),
     FAILED_UNAUTHORIZED             (1001, "未授权"),
     FAILED_PARAMS_VALIDATE          (1002, "参数校验失败"),

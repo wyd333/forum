@@ -22,6 +22,9 @@ class UserServiceImplTest {
     @Resource
     private IUserService userService;
 
+    /**
+     * 测试-注册普通用户
+     */
     @Test
     void createNormalUser() {
         //构造User对象

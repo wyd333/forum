@@ -15,7 +15,7 @@ import java.util.Date;
 
 /**
  * Created with IntelliJ IDEA.
- * Description:
+ * Description: 用户业务接口
  * User: 12569
  * Date: 2023-10-07
  * Time: 20:38
@@ -26,6 +26,10 @@ public class UserServiceImpl implements IUserService {
     @Resource
     private UserMapper userMapper;
 
+    /**
+     * 注册-普通用户
+     * @param user 用户信息
+     */
     @Override
     public void createNormalUser(User user) {
         //1-非空校验
@@ -41,13 +45,13 @@ public class UserServiceImpl implements IUserService {
 
         //2-按用户名查询用户信息
         User existsUser = userMapper.selectByUserName(user.getUsername());
-        //2.1-判断用户是否存在
+        //2.1-判断用户是否已经存在
         if(existsUser != null) {
             log.warn(ResultCode.AILED_USER_EXISTS.toString());
             throw new ApplicationException(AppResult.failed(ResultCode.AILED_USER_EXISTS));
         }
 
-        //3-新增用户流程，设置默认值
+        //3-新增用户流程，设置default值
         user.setGender((byte) 2);
         user.setArticleCount(0);
         user.setIsAdmin((byte) 0);
@@ -58,7 +62,8 @@ public class UserServiceImpl implements IUserService {
         user.setCreateTime(date);
         user.setUpdateTime(date);
 
-        //4-写入数据库，动态插入
+        // 4-写入数据库
+        // 动态插入insertSelective
         int row = userMapper.insertSelective(user);
         if(row != 1) {
             // 打印日志
@@ -68,8 +73,6 @@ public class UserServiceImpl implements IUserService {
         }
 
         //打印日志
-        log.info("新增用户成功！username = " + user.getUsername() + ".");
-
-
+        log.info("新增用户成功! username = " + user.getUsername() + ".");
     }
 }
