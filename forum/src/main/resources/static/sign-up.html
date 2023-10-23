@@ -9,7 +9,7 @@
   <link rel="shortcut icon" href="/favicon.ico">
   <title>FoxForum - 注册</title>
   <!-- 导入CSS -->
-  <link href="./dist/css/tabler.min.css?1674944402" rel="stylesheet" />
+  <link href="./dist/css/tabler.min.css" rel="stylesheet" />
   <link rel="stylesheet" href="./dist/css/jquery.toast.css">
   <!-- 设置字体 -->
   <!-- <style>
@@ -147,14 +147,53 @@ $(function () {
       return false;
     }
     
-    // 构造数据
-    
+    // 构造要发送的数据
+    let postData = {
+      username: $('#username').val(),
+      nickname: $('#nickname').val(),
+      password: $('#password').val(),
+      password_repeat: $('#passwordRepeat').val()
+    };
     // 发送AJAX请求 
-    // contentType = application/x-www-form-urlencoded
     // 成功后跳转到 sign-in.html
     $.ajax ({
-      
+      url: 'user/register',
+      type: 'post',
+      contentType: 'application/x-www-form-urlencoded',
+      data: postData,
+      //回调方法
+      success: function (respData){
+        //判断返回的状态码
+        if(respData.code == 0) {
+          //提示信息
+          $.toast({
+            heading: 'Success',
+            text: '注册成功，正在跳转至登录页面...',
+            icon: 'success'
+          })
 
+          //延迟3秒后跳转到登录界面
+          setTimeout(function () {
+            location.assign('/sign-in.html');
+          }, 3000);
+
+        }else{
+          //提示信息
+          $.toast({
+            heading: 'Warning',
+            text: respData.message,
+            icon: 'warning'
+          })
+        }
+      },
+      //http请求中的错误
+      error: function () {
+        $.toast({
+          heading: 'Error',
+          text: '出现问题，请与管理员联系',
+          icon: 'error'
+        })
+      }
     });
   });
 
