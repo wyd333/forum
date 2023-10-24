@@ -6,6 +6,7 @@ import com.learnings.forum.utils.MD5Util;
 import com.learnings.forum.utils.UUIDUtil;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 
@@ -26,6 +27,7 @@ class UserServiceImplTest {
      * 测试-注册普通用户
      */
     @Test
+    @Transactional
     void createNormalUser() {
         //构造User对象
         User user = new User();
@@ -45,6 +47,18 @@ class UserServiceImplTest {
 
         //调用service层方法
         userService.createNormalUser(user);
+        System.out.println(user);
+    }
+
+    @Test
+    void selectByUserName() {
+        User user = userService.selectByUserName("bitbo3434y");
+        System.out.println(user);
+    }
+
+    @Test
+    void login() {
+        User user = userService.login("test444", "111111");
         System.out.println(user);
     }
 }

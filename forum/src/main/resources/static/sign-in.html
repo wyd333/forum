@@ -64,6 +64,8 @@
 <!--                        <input type="text" class="form-control" placeholder="请输入图片中的验证码" autocomplete="off">-->
 <!--                        <div class="invalid-feedback">验证码不能为空</div>-->
 <!--                      </div>-->
+
+
                       <!-- <div class="mb-2">
                         <label class="form-check">
                           <input type="checkbox" class="form-check-input"/>
@@ -118,10 +120,49 @@
         }
 
         // 构造数据
+        let postData = {
+          username: usernameEl.val(),
+          password: passwordEl.val()
+        };
         
         // 发送AJAX请求，成功后跳转到index.html
         $.ajax({
-          
+          url: 'user/login',
+          type: "post",
+          contentType: 'application/x-www-form-urlencoded',
+          data: postData,
+          //回调
+          //成功，跳转到index.html
+          success: function (respData) {
+            if(respData.code == 0) {
+              //提示信息
+              $.toast({
+                heading: 'Success',
+                text: '登录成功！正在跳转...',
+                icon: 'success'
+              })
+
+              //延迟3秒后跳转到index.html
+              setTimeout(function () {
+                location.assign('/index.html');
+              }, 3000);
+
+            }else{
+              //提示信息
+              $.toast({
+                heading: 'Warning',
+                text: respData.message,
+                icon: 'warning'
+              })
+            }
+          },
+          error: function () {
+            $.toast({
+              heading: 'Error',
+              text: '出现问题，请与管理员联系',
+              icon: 'error'
+            })
+          }
         });
       });
 

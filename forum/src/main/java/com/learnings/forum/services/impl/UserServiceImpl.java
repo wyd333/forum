@@ -6,6 +6,7 @@ import com.learnings.forum.dao.UserMapper;
 import com.learnings.forum.exception.ApplicationException;
 import com.learnings.forum.model.User;
 import com.learnings.forum.services.IUserService;
+import com.learnings.forum.utils.MD5Util;
 import com.learnings.forum.utils.StringUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -74,5 +75,46 @@ public class UserServiceImpl implements IUserService {
 
         //打印日志
         log.info("新增用户成功! username = " + user.getUsername() + ".");
+    }
+
+    @Override
+    public User selectByUserName(String username) {
+        //非空校验
+        if(StringUtil.isEmpty(username)) {
+            // 打印日志
+            log.warn(ResultCode.FAILED_PARAMS_VALIDATE.toString());
+            throw new ApplicationException(AppResult.failed(ResultCode.FAILED_PARAMS_VALIDATE));
+        }
+        //返回查询的结果
+        return userMapper.selectByUserName(username);
+    }
+
+    @Override
+    public User login(String username, String password) {
+        //1-非空校验
+        if(StringUtil.isEmpty(username) || StringUtil.isEmpty(password)) {
+            // 打印日志
+            log.warn(ResultCode.FAILED_PARAMS_VALIDATE.toString());
+            throw new ApplicationException(AppResult.failed(ResultCode.FAILED_LOGIN));
+        }
+        //2-按用户名查询用户信息
+        User user = selectByUserName(username);
+        //3-对查询结果作非空校验
+        if(user == null) {
+            // 打印日志
+            log.warn(ResultCode.FAILED_LOGIN.toString() + ", username = " + username);
+            throw new ApplicationException(AppResult.failed(ResultCode.FAILED_LOGIN));
+        }
+        //4-对密码做校验
+        String encryptPassword = MD5Util.md5Salt(password, user.getSalt());
+        //5-用密文和数据库中存的用户密码进行比较
+        if(!encryptPassword.equalsIgnoreCase(user.getPassword())) {
+            // 打印日志
+            log.warn(ResultCode.FAILED_LOGIN.toString() + " | 密码错误！username = " + username);
+            throw new ApplicationException(AppResult.failed(ResultCode.FAILED_LOGIN));
+        }
+        //6-登录成功，打印日志，返回用户信息
+        log.info("登录成功！username = " + username);
+        return user;
     }
 }

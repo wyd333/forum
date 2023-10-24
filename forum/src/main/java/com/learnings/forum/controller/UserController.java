@@ -2,6 +2,7 @@ package com.learnings.forum.controller;
 
 import com.learnings.forum.common.AppResult;
 import com.learnings.forum.common.ResultCode;
+import com.learnings.forum.config.AppConfig;
 import com.learnings.forum.model.User;
 import com.learnings.forum.services.IUserService;
 import com.learnings.forum.utils.MD5Util;
@@ -17,6 +18,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 /**
  * Created with IntelliJ IDEA.
@@ -73,6 +76,32 @@ public class UserController {
         userService.createNormalUser(user);
 
         //4-返回
+        return AppResult.success();
+    }
+
+    /**
+     * 用户登录
+     * @param username 用户名
+     * @param password 密码
+     * @return
+     */
+    @ApiOperation("用户登录")
+    @PostMapping("/login")
+    public AppResult login(HttpServletRequest request,
+                           @ApiParam("用户名") @RequestParam("username") @NonNull String username,
+                           @ApiParam("密码") @RequestParam("password") @NonNull String password) {
+        //1-调用service中登录方法，返回User对象
+        User user = userService.login(username, password);
+        if(user == null) {
+            //打印日志
+            log.warn(ResultCode.FAILED_LOGIN.toString());
+            //返回结果
+            return AppResult.failed(ResultCode.FAILED_LOGIN);
+        }
+        //2-如果登录成功，将User对象设置到Session作用域中
+        HttpSession session = request.getSession(true);
+        session.setAttribute(AppConfig.USER_SESSION, user);
+        //3-返回结果
         return AppResult.success();
     }
 }
