@@ -19,7 +19,7 @@ public interface IUserService {
     /**
      * 根据用户名查询用户信息
      * @param username 用户名
-     * @return 用户信息
+     * @return User对象
      */
     User selectByUserName(String username);
 
@@ -27,7 +27,14 @@ public interface IUserService {
      * 处理用户登录
      * @param username 用户名
      * @param password 密码
-     * @return 用户信息
+     * @return User对象
      */
     User login(String username, String password);
+
+    /**
+     * 根据id查询用户信息
+     * @param id 用户id
+     * @return User对象
+     */
+    User selectById(Long id);
 }

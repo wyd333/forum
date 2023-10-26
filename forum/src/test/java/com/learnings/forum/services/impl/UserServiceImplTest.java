@@ -61,4 +61,10 @@ class UserServiceImplTest {
         User user = userService.login("test444", "111111");
         System.out.println(user);
     }
+
+    @Test
+    void selectById() {
+        User user = userService.selectById(0L);
+        System.out.println(user);
+    }
 }

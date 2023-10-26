@@ -117,4 +117,18 @@ public class UserServiceImpl implements IUserService {
         log.info("登录成功！username = " + username);
         return user;
     }
+
+    @Override
+    public User selectById(Long id) {
+        //1-非空校验
+        if(id == null) {
+            // 打印日志
+            log.warn(ResultCode.FAILED_PARAMS_VALIDATE.toString());
+            throw new ApplicationException(AppResult.failed(ResultCode.FAILED_LOGIN));
+        }
+        //2-调用dao查询数据库 并获取对象
+        User user = userMapper.selectByPrimaryKey(id);
+        //3-返回结果
+        return user;
+    }
 }

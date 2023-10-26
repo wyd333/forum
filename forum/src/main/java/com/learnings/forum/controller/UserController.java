@@ -12,10 +12,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -103,5 +100,35 @@ public class UserController {
         session.setAttribute(AppConfig.USER_SESSION, user);
         //3-返回结果
         return AppResult.success();
+    }
+
+
+    @ApiOperation("获取用户信息")
+    @GetMapping("/info")
+    public AppResult<User> getUserInfo(HttpServletRequest request,
+                                       @ApiParam("用户ID") @RequestParam(value = "id", required = false) Long id){
+        //定义返回的user对象
+        User user = null;
+        //根据入参id的值判断user对象的获取方式
+        if(id == null) {
+            //1-如果id为null，则从session中获取当前登录的用户信息
+            HttpSession session = request.getSession(false);
+            //2-判断session和用户信息是否有效
+            if(session == null || session.getAttribute(AppConfig.USER_SESSION) == null) {
+                //表示用户没有登录，返回错误信息
+                return AppResult.failed(ResultCode.FAILED_FORBIDDEN);
+            }
+            //从session中获取当前登录的用户信息
+            user = (User) session.getAttribute(AppConfig.USER_SESSION);
+        }else{
+            //如果id不为null，则从数据库中查询出用户信息
+            user = userService.selectById(id);
+        }
+        //判断user是否为null 给前端返回有效的数据
+        if(user == null) {
+            return AppResult.failed(ResultCode.FAILED_USER_NOT_EXISTS);
+        }
+        //正常返回
+        return AppResult.success(user);
     }
 }
