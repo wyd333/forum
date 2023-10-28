@@ -1,5 +1,7 @@
 package com.learnings.forum.common;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+
 /**
  * Created with IntelliJ IDEA.
  * Description: 定义返回结果。
@@ -10,10 +12,13 @@ package com.learnings.forum.common;
  */
 public class AppResult<T> {
     //状态码
+    @JsonInclude(JsonInclude.Include.ALWAYS)    //保证不论什么情况，该字段都要参与json序列化
     private int code;
     //描述信息
+    @JsonInclude(JsonInclude.Include.ALWAYS)    //保证不论什么情况，该字段都要参与json序列化
     private String message;
     //具体数据
+    @JsonInclude(JsonInclude.Include.ALWAYS)    //保证不论什么情况，该字段都要参与json序列化
     private T data;
 
     /**
