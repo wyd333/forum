@@ -28,3 +28,9 @@ logging:
     path: D:/ASSIGNMENT/code/log-forum  # 反斜杠需要转译，故用斜杠表示
   pattern:
     dateformat: MM-dd HH:mm:ss  # 日期的显示格式
+
+
+# 项⽬⾃定义相关配置
+fox-forum:
+  login:
+    url: sign-in.html # 未登录状况下强制跳转⻚⾯

@@ -309,9 +309,46 @@
   $(function () {
     //========================= 获取用户信息 =======================
     // 成功后，手动设置用户信息
-    // $('#index_nav_avatar').css('background-image', 'url(' + user.avatarUrl + ')');
     $.ajax({
+      url: 'user/info',
+      type: 'get',  // 没有传参，获取当前登录用户的信息
+      // 成功回调
+      success: function (respData) {
+        //判断状态码
+        if(respData.code == 0) {
+          // 设置页面上用户的信息
+          let user = respData.data;
+          // 判断用户头像是否有效
+          if(!user.avatarUrl) {
+            //设置默认头像地址
+            user.avatarUrl = avatarUrl;
+          }
 
+          //设置页面上的头像
+          $('#index_nav_avatar').css('background-image', 'url(' + user.avatarUrl + ')');
+          //设置用户昵称
+          $('#index_nav_nickname').html(user.nickname);
+          //设置用户组
+          let subName = user.isAdmin == 1 ? '管理员' : '普通用户';
+          $('#index_nav_name_sub').html(subName);
+
+
+        }else{
+          //提示信息
+          $.toast({
+            heading: 'Warning',
+            text: respData.message,
+            icon: 'warning'
+          })
+        }
+      },
+      error: function () {
+        $.toast({
+          heading: 'Error',
+          text: '出现问题，请与管理员联系',
+          icon: 'error'
+        });
+      }
     });
 
     // ========================= 获取版块信息 =======================
@@ -392,7 +429,13 @@
     // 成功后，跳转到sign-in.html
     $('#index_user_logout').click(function () {
       $.ajax({
-        
+        type: 'get',
+        url: 'user/logout',
+        //完成的回调，不关注以何种状态返回（成功/失败）
+        complete: function () {
+          //当请求完成时无论成功/失败都跳转到登录界面
+          location.assign('sign-in.html');
+        }
       });
     });
 

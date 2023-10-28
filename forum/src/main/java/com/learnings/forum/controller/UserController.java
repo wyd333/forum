@@ -111,13 +111,8 @@ public class UserController {
         User user = null;
         //根据入参id的值判断user对象的获取方式
         if(id == null) {
-            //1-如果id为null，则从session中获取当前登录的用户信息
+            //如果id为null，则从session中获取当前登录的用户信息
             HttpSession session = request.getSession(false);
-            //2-判断session和用户信息是否有效
-            if(session == null || session.getAttribute(AppConfig.USER_SESSION) == null) {
-                //表示用户没有登录，返回错误信息
-                return AppResult.failed(ResultCode.FAILED_FORBIDDEN);
-            }
             //从session中获取当前登录的用户信息
             user = (User) session.getAttribute(AppConfig.USER_SESSION);
         }else{
@@ -130,5 +125,20 @@ public class UserController {
         }
         //正常返回
         return AppResult.success(user);
+    }
+
+    @ApiOperation("用户退出登录")
+    @GetMapping("/logout")
+    public AppResult logout(HttpServletRequest request){
+        //获取session对象
+        HttpSession session = request.getSession(false);
+        //判断session是否有效
+        if(session != null) {
+            //打印日志
+            log.info("退出成功");
+            //表示用户在已登录状态，直接销毁session
+            session.invalidate();
+        }
+        return AppResult.success("退出成功");
     }
 }

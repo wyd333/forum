@@ -1,4 +1,4 @@
-// =================== 定义全局变量 ======================
+// 定义全局变量
 let avatarUrl = 'image/avatar01.jpeg'; // 默认头像
 let currentArticle; // 当前访问的帖子
 let currentUserId;  // 当前登录用户
