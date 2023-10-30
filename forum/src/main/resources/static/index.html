@@ -331,15 +331,13 @@
           //设置用户组
           let subName = user.isAdmin == 1 ? '管理员' : '普通用户';
           $('#index_nav_name_sub').html(subName);
-
-
         }else{
           //提示信息
           $.toast({
             heading: 'Warning',
             text: respData.message,
             icon: 'warning'
-          })
+          });
         }
       },
       error: function () {
@@ -354,7 +352,28 @@
     // ========================= 获取版块信息 =======================
     // 成功后，调用buildTopBoard()方法，构建版块列表
     $.ajax({
-      
+      url: 'board/top_list',
+      type: 'get',
+      success: function (respData) {
+        if(respData.code == 0) {
+          // 构建板块列表
+          buildTopBoard(respData.data);
+        }else{
+          //提示信息
+          $.toast({
+            heading: 'Warning',
+            text: respData.message,
+            icon: 'warning'
+          });
+        }
+      },
+      error: function () {
+        $.toast({
+          heading: 'Error',
+          text: '出现问题，请与管理员联系',
+          icon: 'error'
+        });
+      }
     });
 
     //========================= 构造首页版块=======================
