@@ -131,4 +131,9 @@ public class UserServiceImpl implements IUserService {
         //3-返回结果
         return user;
     }
+
+    @Override
+    public void addOneArticleCountById(Long id) {
+
+    }
 }

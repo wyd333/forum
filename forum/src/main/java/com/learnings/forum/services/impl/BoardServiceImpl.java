@@ -41,4 +41,9 @@ public class BoardServiceImpl implements IBoradService {
         //3-返回结果
         return result;
     }
+
+    @Override
+    public void addOneArticleCountById(Long id) {
+
+    }
 }

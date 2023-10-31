@@ -19,4 +19,11 @@ public interface IBoradService {
      */
     List<Board> selectByNum(Integer num);
 
+
+    /**
+     * 更新板块中的帖子数据
+     * @param id 板块id
+     */
+    void addOneArticleCountById(Long id);
+
 }
