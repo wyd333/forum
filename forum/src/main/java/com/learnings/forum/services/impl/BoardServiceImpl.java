@@ -44,6 +44,33 @@ public class BoardServiceImpl implements IBoradService {
 
     @Override
     public void addOneArticleCountById(Long id) {
+        //1-非空校验
+        if(id == null || id <= 0) {
+            //打印日志
+            log.warn(ResultCode.FAILED_BOARD_ARTICLE_COUNT.toString());
+            //抛出异常
+            throw new ApplicationException(AppResult.failed(ResultCode.FAILED_BOARD_ARTICLE_COUNT));
+        }
 
+        //2-查询对应的板块
+        Board board = boardMapper.selectByPrimaryKey(id);
+        if(board == null) {
+            log.warn(ResultCode.ERROR_IS_NULL.toString() + ", board id = " + id);
+            throw new ApplicationException(AppResult.failed(ResultCode.ERROR_IS_NULL));
+        }
+
+        //3-更新帖子数量
+        Board updateBoard = new Board();    //重新创建一个用来更新的对象
+        //4-设置要更新的属性，调用动态更新的方法
+        updateBoard.setId(id);
+        updateBoard.setArticleCount(board.getArticleCount()+1);
+
+        //5-调用dao，执行更新
+        int row = boardMapper.updateByPrimaryKeySelective(updateBoard);
+        //6-判断受影响的行数
+        if(row != 1) {
+            log.warn(ResultCode.FAILED.toString() + ", 受影响的行数 != 1");
+            throw new ApplicationException(AppResult.failed(ResultCode.FAILED));
+        }
     }
 }

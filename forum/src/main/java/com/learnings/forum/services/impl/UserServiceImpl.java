@@ -134,6 +134,30 @@ public class UserServiceImpl implements IUserService {
 
     @Override
     public void addOneArticleCountById(Long id) {
+        //1-非空校验
+        if(id == null || id <= 0) {
+            //打印日志
+            log.warn(ResultCode.FAILED_USER_ARTICLE_COUNT.toString());
+            //抛出异常
+            throw new ApplicationException(AppResult.failed(ResultCode.FAILED_USER_ARTICLE_COUNT));
+        }
+        //2-查询用户信息
+        User user = userMapper.selectByPrimaryKey(id);
+        if(user == null) {
+            log.warn(ResultCode.ERROR_IS_NULL.toString() + ", user id = " + id);
+            throw new ApplicationException(AppResult.failed(ResultCode.ERROR_IS_NULL));
+        }
+        //3-创建一个用于更新的对象 更新用户的发帖数量
+        User updateUser = new User();
+        updateUser.setId(user.getId());
+        updateUser.setArticleCount(user.getArticleCount() + 1);
+        //4-更新数据库
+        int row = userMapper.updateByPrimaryKeySelective(updateUser);
+        if(row != 1) {
+            log.warn(ResultCode.FAILED.toString() + ", 受影响的行数 != 1");
+            throw new ApplicationException(AppResult.failed(ResultCode.FAILED));
+        }
+
 
     }
 }
