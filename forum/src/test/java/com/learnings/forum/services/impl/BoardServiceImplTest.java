@@ -1,9 +1,10 @@
 package com.learnings.forum.services.impl;
 
 import com.learnings.forum.model.Board;
-import com.learnings.forum.services.IBoradService;
+import com.learnings.forum.services.IBoardService;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -19,7 +20,7 @@ import java.util.List;
 @SpringBootTest
 class BoardServiceImplTest {
     @Resource
-    private IBoradService boradService;
+    private IBoardService boradService;
 
     @Test
     void selectByNum() {
@@ -28,6 +29,7 @@ class BoardServiceImplTest {
     }
 
     @Test
+    @Transactional  //回滚数据库操作
     void addOneArticleCountById() {
         boradService.addOneArticleCountById(1L);
         System.out.println("更新成功!");

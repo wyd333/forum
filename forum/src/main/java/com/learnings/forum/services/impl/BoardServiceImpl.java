@@ -5,7 +5,7 @@ import com.learnings.forum.common.ResultCode;
 import com.learnings.forum.dao.BoardMapper;
 import com.learnings.forum.exception.ApplicationException;
 import com.learnings.forum.model.Board;
-import com.learnings.forum.services.IBoradService;
+import com.learnings.forum.services.IBoardService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -22,7 +22,7 @@ import java.util.List;
 
 @Service
 @Slf4j
-public class BoardServiceImpl implements IBoradService {
+public class BoardServiceImpl implements IBoardService {
 
 
     @Resource
@@ -40,6 +40,20 @@ public class BoardServiceImpl implements IBoradService {
         List<Board> result = boardMapper.selectByNum(num);
         //3-返回结果
         return result;
+    }
+
+    @Override
+    public Board selectById(Long id) {
+        //1-非空校验
+        if(id == null || id <= 0) {
+            //打印日志
+            log.warn(ResultCode.FAILED_PARAMS_VALIDATE.toString());
+            //抛出异常
+            throw new ApplicationException(AppResult.failed(ResultCode.FAILED_PARAMS_VALIDATE));
+        }
+        //2-调用DAO查询数据
+        Board board = boardMapper.selectByPrimaryKey(id);
+        return board;
     }
 
     @Override

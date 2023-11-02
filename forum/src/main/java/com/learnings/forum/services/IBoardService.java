@@ -11,13 +11,20 @@ import java.util.List;
  * Date: 2023-10-29
  * Time: 22:41
  */
-public interface IBoradService {
+public interface IBoardService {
     /**
      * 查询 num 条记录
      * @param num 要查询的条数
      * @return 结果集
      */
     List<Board> selectByNum(Integer num);
+
+    /**
+     * 根据板块id查询板块信息
+     * @param id 板块id
+     * @return
+     */
+    Board selectById(Long id);
 
 
     /**

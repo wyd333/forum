@@ -2,7 +2,7 @@ package com.learnings.forum.controller;
 
 import com.learnings.forum.common.AppResult;
 import com.learnings.forum.model.Board;
-import com.learnings.forum.services.IBoradService;
+import com.learnings.forum.services.IBoardService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -34,7 +34,7 @@ public class BoardController {
     private Integer indexBoardNum;
 
     @Resource
-    private IBoradService boradService;
+    private IBoardService boradService;
 
     /**
      * 查询首页板块列表
