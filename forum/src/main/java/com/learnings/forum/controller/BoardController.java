@@ -17,7 +17,7 @@ import java.util.List;
 
 /**
  * Created with IntelliJ IDEA.
- * Description: 板块接口
+ * Description: 板块
  * User: 12569
  * Date: 2023-10-29
  * Time: 23:04
