@@ -19,7 +19,7 @@
           <label class="form-label"><strong>版块</strong></label>
           <select id="article_post_borad" type="text" class="form-select" placeholder="Select a date" id="select-tags"
             value="">
-            <option value="1">JAVA</option>
+            <option value="1" selected>JAVA</option>
             <option value="2">C++</option>
             <option value="3">前端技术</option>
             <option value="4">MySQL</option>
@@ -113,12 +113,48 @@
       }
 
       // 构造帖子对象
+      let postData = {
+        boardId : boardIdEl.val(),
+        title : titleEl.val(),
+        content : contentEl.val()
+      };
       
 
       // 提交, 成功后调用changeNavActive($('#nav_board_index'));回到首页并加载帖子列表
       // contentType: 'application/x-www-form-urlencoded'
       $.ajax({
-        
+        url: "article/create",
+        type: "post",
+        contentType: "application/x-www-form-urlencoded",
+        data: postData,
+        //回调
+        success: function (respData) {
+          if(respData.code == 0) {
+            //发布成功
+            //提示信息
+            $.toast({
+              heading: 'Success',
+              text: '发帖成功！',
+              icon: 'success'
+            });
+            changeNavActive($('#nav_board_index'));
+          }else{
+            //提示信息
+            $.toast({
+              heading: 'Warning',
+              text: respData.message,
+              icon: 'warning'
+            });
+          }
+        },
+        error: function (){
+          //http访问出现错误
+          $.toast({
+            heading: 'Error',
+            text: '出现问题，请与管理员联系',
+            icon: 'error'
+          });
+        }
       });
     });
   });

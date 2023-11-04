@@ -82,8 +82,5 @@ public class ArticleController {
 
         //5-响应成果
         return AppResult.success();
-
-
-
     }
 }
