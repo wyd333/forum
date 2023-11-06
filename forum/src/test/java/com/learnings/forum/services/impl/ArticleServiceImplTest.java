@@ -1,11 +1,15 @@
 package com.learnings.forum.services.impl;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.learnings.forum.model.Article;
 import com.learnings.forum.services.IArticleService;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import javax.annotation.Resource;
+
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -22,6 +26,9 @@ class ArticleServiceImplTest {
     @Resource
     private IArticleService articleService;
 
+    @Resource
+    private ObjectMapper objectMapper;
+
     @Test
     void create() {
         Article article = new Article();
@@ -31,5 +38,12 @@ class ArticleServiceImplTest {
         article.setContent("测试内容");
         articleService.create(article);
         System.out.println("发帖成功");
+    }
+
+    @Test
+    void selectAll() throws JsonProcessingException {
+        //调用service
+        List<Article> articles = articleService.selectAll();
+        System.out.println(objectMapper.writeValueAsString(articles));  //对象转成json字符串
     }
 }

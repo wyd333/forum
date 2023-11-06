@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.learnings.forum.dao.ArticleMapper">
 <!--  自定义结果集映射-->
-  <resultMap id="AllInfoResultMap" type="com.learnings.forum.model.Article">
+  <resultMap id="AllInfoResultMap" type="com.learnings.forum.model.Article" extends="ResultMapWithBLOBs">
 <!--    关联的用户的映射-->
     <association property="user" resultMap="com.learnings.forum.dao.UserMapper.BaseResultMap"
     columnPrefix="u_"  />

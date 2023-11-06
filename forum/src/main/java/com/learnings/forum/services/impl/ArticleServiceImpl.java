@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.Date;
+import java.util.List;
 
 /**
  * Created with IntelliJ IDEA.
@@ -36,6 +37,8 @@ public class ArticleServiceImpl implements IArticleService {
     private IBoardService boardService;
     @Resource
     private IUserService userService;
+
+
     @Override
     public void create(Article article) {
         //1-非空校验
@@ -90,7 +93,13 @@ public class ArticleServiceImpl implements IArticleService {
         log.info(ResultCode.SUCCESS.toString() + "user id = " + article.getUserId()
                 + ", board id = " + article.getBoardId()
                 + ", article id = " + article.getId() + "，发帖成功");
+    }
 
 
+    @Override
+    public List<Article> selectAll() {
+        // 调用dao
+        List<Article> articles = articleMapper.selectAll();
+        return articles;
     }
 }

@@ -13,14 +13,13 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created with IntelliJ IDEA.
@@ -82,5 +81,19 @@ public class ArticleController {
 
         //5-响应成果
         return AppResult.success();
+    }
+
+    @ApiOperation("获取帖子列表")
+    @GetMapping("/get_list_by_board_id")
+    public AppResult<List<Article>>  getListByBoardId(@ApiParam("板块id") @RequestParam(value = "boardId", required = false) Long boardId){
+        //查询所有
+        List<Article> articles = articleService.selectAll();
+        //如果结果集为空，创建一个空集合
+        if(articles == null) {
+            articles = new ArrayList<>();
+        }
+
+        //响应结果
+        return AppResult.success(articles);
     }
 }

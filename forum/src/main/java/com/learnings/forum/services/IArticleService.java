@@ -3,6 +3,8 @@ package com.learnings.forum.services;
 import com.learnings.forum.model.Article;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 /**
  * Created with IntelliJ IDEA.
  * Description: 帖子业务接口
@@ -19,4 +21,7 @@ public interface IArticleService {
 
     @Transactional  //当前方法中的执行过程会被事务管理起来
     void create(Article article);
+
+    List<Article> selectAll();
+
 }
