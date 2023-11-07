@@ -29,6 +29,7 @@ public enum ResultCode {
     //      板块相关
     FAILED_BOARD_ARTICLE_COUNT      (1201,"更新帖子数量失败"),
     FAILED_BOARD_BANNED             (1202,"板块状态异常"),
+    FAILED_BOARD_NOT_EXISTS         (1203,"板块不存在"),
 
     //    服务器相关
     ERROR_SERVICES                  (2000, "服务器内部错误"),

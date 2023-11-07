@@ -28,6 +28,28 @@
     where a.userId = u.id
       and a.deleteState = 0
     ORDER BY a.createTime DESC;
+  </select>
 
+  <!--    根据板块id查询所有未被删除的帖子列表，不包含content-->
+  <select id="selectAllByBoardId" resultMap="AllInfoResultMap" parameterType="java.lang.Long">
+    select
+      u.id as u_id,
+      u.avatarUrl as u_avatarUrl,
+      u.nickname as u_nickname,
+      a.id,
+      a.boardId,
+      a.userId,
+      a.title,
+      a.visitCount,
+      a.replyCount,
+      a.likeCount,
+      a.state,
+      a.createTime,
+      a.updateTime
+    from t_article a, t_user u
+    where a.userId = u.id
+    and a.deleteState = 0
+    and a.boardId = #{boardId,jdbcType=BIGINT}
+    ORDER BY a.createTime DESC;
   </select>
 </mapper>

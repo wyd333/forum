@@ -46,4 +46,10 @@ class ArticleServiceImplTest {
         List<Article> articles = articleService.selectAll();
         System.out.println(objectMapper.writeValueAsString(articles));  //对象转成json字符串
     }
+
+    @Test
+    void selectAllByBoardId() throws JsonProcessingException {
+        List<Article> articles = articleService.selectAllByBoardId(10L);
+        System.out.println(objectMapper.writeValueAsString(articles));  //对象转成json字符串
+    }
 }

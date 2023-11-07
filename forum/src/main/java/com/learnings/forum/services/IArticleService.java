@@ -24,4 +24,11 @@ public interface IArticleService {
 
     List<Article> selectAll();
 
+    /**
+     * 根据板块id查询帖子列表
+     * @param boardId 板块id
+     * @return
+     */
+    List<Article> selectAllByBoardId(Long boardId);
+
 }

@@ -83,11 +83,22 @@ public class ArticleController {
         return AppResult.success();
     }
 
+    /**
+     * 获取帖子列表，如果传入了boardId，则按boardId号查找，如果没有传入则查询全部
+     * @param boardId
+     * @return
+     */
     @ApiOperation("获取帖子列表")
     @GetMapping("/get_list_by_board_id")
     public AppResult<List<Article>>  getListByBoardId(@ApiParam("板块id") @RequestParam(value = "boardId", required = false) Long boardId){
-        //查询所有
-        List<Article> articles = articleService.selectAll();
+        //返回的集合
+        List<Article> articles;
+        if(boardId == null) {
+            //查询所有
+            articles = articleService.selectAll();
+        } else {
+            articles = articleService.selectAllByBoardId(boardId);
+        }
         //如果结果集为空，创建一个空集合
         if(articles == null) {
             articles = new ArrayList<>();

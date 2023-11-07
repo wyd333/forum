@@ -102,4 +102,25 @@ public class ArticleServiceImpl implements IArticleService {
         List<Article> articles = articleMapper.selectAll();
         return articles;
     }
+
+    @Override
+    public List<Article> selectAllByBoardId(Long boardId) {
+        //1-非空校验
+        if(boardId == null || boardId <= 0) {
+            log.warn(ResultCode.FAILED_PARAMS_VALIDATE.toString());
+            throw new ApplicationException(AppResult.failed(ResultCode.FAILED_PARAMS_VALIDATE));
+        }
+
+        //2-校验板块是否存在
+        Board board = boardService.selectById(boardId);
+        if(board == null) {
+            log.warn(ResultCode.FAILED_BOARD_NOT_EXISTS.toString() + ", boardId = " + boardId);
+            throw new ApplicationException(AppResult.failed(ResultCode.FAILED_BOARD_NOT_EXISTS));
+        }
+
+        //3-调用dao，查询
+        List<Article> articles = articleMapper.selectAllByBoardId(boardId);
+
+        return articles;
+    }
 }
