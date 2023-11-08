@@ -93,7 +93,7 @@
     // ========================= 获取帖子列表 =======================
     // 成功后，调用listBuildArticleList()方法，构建帖子列表
     $.ajax({
-      url: 'article/get_list_by_board_id',
+      url: 'article/get_list_by_board_id' + queryString,
       type: 'get',
       //回调
       success: function (respData) {
