@@ -1,5 +1,7 @@
 package com.learnings.forum.services.impl;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.learnings.forum.model.Board;
 import com.learnings.forum.services.IBoardService;
 import org.junit.jupiter.api.Test;
@@ -20,18 +22,26 @@ import java.util.List;
 @SpringBootTest
 class BoardServiceImplTest {
     @Resource
-    private IBoardService boradService;
+    private IBoardService boardService;
+    @Resource
+    private ObjectMapper objectMapper;
 
     @Test
     void selectByNum() {
-        List<Board> boards = boradService.selectByNum(3);
+        List<Board> boards = boardService.selectByNum(3);
         System.out.println(boards);
     }
 
     @Test
     @Transactional  //回滚数据库操作
     void addOneArticleCountById() {
-        boradService.addOneArticleCountById(1L);
+        boardService.addOneArticleCountById(1L);
         System.out.println("更新成功!");
+    }
+
+    @Test
+    void selectById() throws JsonProcessingException {
+        Board board = boardService.selectById(10L);
+        System.out.println(objectMapper.writeValueAsString(board));
     }
 }

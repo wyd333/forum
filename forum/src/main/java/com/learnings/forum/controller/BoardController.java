@@ -1,14 +1,19 @@
 package com.learnings.forum.controller;
 
 import com.learnings.forum.common.AppResult;
+import com.learnings.forum.common.ResultCode;
+import com.learnings.forum.exception.ApplicationException;
 import com.learnings.forum.model.Board;
 import com.learnings.forum.services.IBoardService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
@@ -50,6 +55,22 @@ public class BoardController {
             boards = new ArrayList<>();
         }
         return AppResult.success(boards);
+    }
+
+
+    @ApiOperation("获取板块信息")
+    @GetMapping("get_by_id")
+    public AppResult<Board> getById(@ApiParam("板块id") @RequestParam("id") @NonNull Long id){
+        //1-调用service
+        Board board = boradService.selectById(id);
+        //2-对查询结果进行校验
+        if(board == null || board.getDeleteState() == 1) {
+            //打印日志
+            log.warn(ResultCode.FAILED_BOARD_NOT_EXISTS.toString());
+            throw new ApplicationException(AppResult.failed(ResultCode.FAILED_BOARD_NOT_EXISTS));
+        }
+        //3-返回结果
+        return AppResult.success(board);
     }
 
 }

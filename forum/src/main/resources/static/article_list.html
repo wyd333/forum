@@ -8,6 +8,7 @@
           子标题
         </div> -->
         <h2 class="page-title" id="article_list_board_title">
+<!--          如果是版块页面，替换成版块名-->
           首页
         </h2>
         <!-- 帖子数量 -->
@@ -86,7 +87,32 @@
       }
       // 发送请求， 成功后，显示版块相关信息
       $.ajax({
-        
+        url: 'board/get_by_id?id=' + boardId,
+        type: 'get',
+        success: function (respData) {
+          if(respData.code == 0) {
+            //成功，更新页面信息
+            let board = respData.data;
+            $('#article_list_board_title').html(board.name);
+            $('#article_list_count_board').html('帖子数量： ' + board.articleCount);
+
+          }else{
+            //失败
+            //提示信息
+            $.toast({
+              heading: 'Warning',
+              text: respData.message,
+              icon: 'warning'
+            });
+          }
+        },
+        error: function (){
+          $.toast({
+            heading: 'Error',
+            text: '出现问题，请与管理员联系',
+            icon: 'error'
+          });
+        }
       });
     }
 
