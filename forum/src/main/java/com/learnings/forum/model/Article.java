@@ -33,4 +33,7 @@ public class Article {
     //关联对象-作者
     private User user;
 
+    //关联对象-版块
+    private Board board;
+
 }
