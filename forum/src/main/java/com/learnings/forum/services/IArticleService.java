@@ -31,4 +31,11 @@ public interface IArticleService {
      */
     List<Article> selectAllByBoardId(Long boardId);
 
+    /**
+     * 根据帖子id查询详情
+     * @param id 帖子id
+     * @return 帖子详情
+     */
+    Article selectDetailById(Long id);
+
 }

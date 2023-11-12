@@ -6,6 +6,7 @@ import com.learnings.forum.model.Article;
 import com.learnings.forum.services.IArticleService;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 
@@ -51,5 +52,12 @@ class ArticleServiceImplTest {
     void selectAllByBoardId() throws JsonProcessingException {
         List<Article> articles = articleService.selectAllByBoardId(10L);
         System.out.println(objectMapper.writeValueAsString(articles));  //对象转成json字符串
+    }
+
+    @Test
+    @Transactional
+    void selectDetailById() throws JsonProcessingException {
+        Article article = articleService.selectDetailById(1L);
+        System.out.println(objectMapper.writeValueAsString(article));
     }
 }

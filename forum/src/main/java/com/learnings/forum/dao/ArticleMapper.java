@@ -35,9 +35,9 @@ public interface ArticleMapper {
 
     /**
      * 根据帖子id查询详情
-     * @param id
-     * @return
+     * @param id 帖子id
+     * @return 帖子详情
      */
-    Article selectById(@Param("id") Long id);
+    Article selectDetailById(@Param("id") Long id);
 
 }

@@ -7,7 +7,7 @@
     <association property="user" resultMap="com.learnings.forum.dao.UserMapper.BaseResultMap"
                  columnPrefix="u_"  />
 <!--    关联版块的映射-->
-    <association property="boardId" resultMap="com.learnings.forum.dao.BoardMapper.BaseResultMap"
+    <association property="board" resultMap="com.learnings.forum.dao.BoardMapper.BaseResultMap"
                  columnPrefix="b_"/>
 
   </resultMap>
@@ -56,7 +56,7 @@
     ORDER BY a.createTime DESC;
   </select>
   
-  <select id="selectById" resultMap="AllInfoResultMap" parameterType="java.lang.Long">
+  <select id="selectDetailById" resultMap="AllInfoResultMap" parameterType="java.lang.Long">
     select
       u.id as u_id,
       u.avatarUrl as u_avatarUrl,

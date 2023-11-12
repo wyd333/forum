@@ -8,6 +8,7 @@ import com.learnings.forum.model.Board;
 import com.learnings.forum.model.User;
 import com.learnings.forum.services.IArticleService;
 import com.learnings.forum.services.IBoardService;
+import com.sun.istack.internal.NotNull;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -106,5 +107,18 @@ public class ArticleController {
 
         //响应结果
         return AppResult.success(articles);
+    }
+
+    @ApiOperation("根据帖子Id获取详情")
+    @GetMapping("/details")
+    public AppResult<Article> getDetails(@ApiParam("帖子Id") @RequestParam("id") @NotNull Long id){
+        //1-调用service获取帖子详情
+        Article article = articleService.selectDetailById(id);
+        //2-判断结果是否为空
+        if(article == null) {
+            return AppResult.failed(ResultCode.FAILED_NOT_EXISTS);
+        }
+        //3-返回结果
+        return AppResult.success(article);
     }
 }
