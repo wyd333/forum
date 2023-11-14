@@ -1,5 +1,6 @@
 package com.learnings.forum.model;
 
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.util.Date;
@@ -29,6 +30,9 @@ public class Article {
     private Date updateTime;
 
     private String content;
+
+    @ApiModelProperty("是否为作者")
+    private boolean isOwn = false;
 
     //关联对象-作者
     private User user;
