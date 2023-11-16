@@ -87,6 +87,37 @@
     // ========================== 获取帖子详情 ========================== 
     // 成功后，设置ID,版块名，标题，并初始编辑区同时设置正文initEditor(edit_article.content);
     $.ajax({
+      url: 'article/details?id=' + currentArticle.id,
+      type: 'get',
+      // 成功回调
+      success: function (respData) {
+        //判断状态码
+        if(respData.code == 0) {
+          let article = respData.data;
+          //1-设置板块名
+          $('#edit_article_board_name').html(">" + article.board.name);
+          //2-设置标题
+          $('#edit_article_title').val(article.title);  //设置input的内容用的是val方法
+          //3-设置正文
+          initEditor(article.content);
+
+        }else{  //业务失败
+          //提示信息
+          $.toast({
+            heading: 'Warning',
+            text: respData.message,
+            icon: 'warning'
+          });
+        }
+      },
+      //http失败
+      error: function () {
+        $.toast({
+          heading: 'Error',
+          text: '出现问题，请与管理员联系',
+          icon: 'error'
+        });
+      }
 
     });
     
