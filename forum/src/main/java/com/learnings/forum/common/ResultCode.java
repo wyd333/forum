@@ -33,6 +33,7 @@ public enum ResultCode {
 
     //帖子相关
     FAILED_ARTICLE_NOT_EXISTS          (1301, "帖子不存在"),
+    FAILED_ARTICLE_BANNED          (13012, "帖子状态异常"),
 
 
     //    服务器相关

@@ -3,6 +3,7 @@ package com.learnings.forum.controller;
 import com.learnings.forum.common.AppResult;
 import com.learnings.forum.common.ResultCode;
 import com.learnings.forum.config.AppConfig;
+import com.learnings.forum.exception.ApplicationException;
 import com.learnings.forum.model.Article;
 import com.learnings.forum.model.Board;
 import com.learnings.forum.model.User;
@@ -132,5 +133,44 @@ public class ArticleController {
         }
         //3-返回结果
         return AppResult.success(article);
+    }
+
+    @ApiOperation("编辑文章内容")
+    @PostMapping("/modify")
+    public AppResult modify(HttpServletRequest servletRequest,
+                            @ApiParam("文章Id") @RequestParam("id") @NonNull Long id,
+                            @ApiParam("文章标题") @RequestParam("title") @NonNull String title,
+                            @ApiParam("文章内容") @RequestParam("content") @NonNull String content){
+        //1-从session中获取当前用户
+        HttpSession session = servletRequest.getSession(false);
+        User user = (User) session.getAttribute(AppConfig.USER_SESSION);
+        //判断用户是否被禁言
+        if(user.getState() == 1) {
+            log.warn(ResultCode.FAILED_USER_BANNED.toString());
+            return AppResult.failed(ResultCode.FAILED_USER_BANNED);
+        }
+        //2-查询文章作者
+        Article article = articleService.selectById(id);
+        if(article == null) {
+            log.warn(ResultCode.FAILED_ARTICLE_NOT_EXISTS.toString());
+            throw new ApplicationException(AppResult.failed(ResultCode.FAILED_ARTICLE_NOT_EXISTS));
+        }
+
+        if(!user.getId().equals(article.getUserId())) {
+            log.warn(ResultCode.FAILED_FORBIDDEN.toString());
+            throw new ApplicationException(AppResult.failed(ResultCode.FAILED_FORBIDDEN));
+        }
+
+        //判断帖子状态--已归档or已删除
+        if(article.getState() == 1 || article.getDeleteState() == 1) {
+            log.warn(ResultCode.FAILED_BOARD_BANNED.toString());
+            throw new ApplicationException(AppResult.failed(ResultCode.FAILED_BOARD_BANNED));
+        }
+
+        //3-调用service层
+        articleService.modify(id, title, content);
+        //4-打印成功日志
+        log.info("更新帖子成功：Article Id = " + id + ", User Id = " + user.getId());
+        return AppResult.success();
     }
 }

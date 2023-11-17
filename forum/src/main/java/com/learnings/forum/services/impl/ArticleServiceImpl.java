@@ -154,4 +154,40 @@ public class ArticleServiceImpl implements IArticleService {
         //6-返回帖子详情
         return article;
     }
+
+
+
+    @Override
+    public void modify(Long id, String title, String content) {
+        //1-非空校验
+        if(id == null || id <= 0
+                || StringUtil.isEmpty(title) || StringUtil.isEmpty(content)) {
+            log.warn(ResultCode.FAILED_PARAMS_VALIDATE.toString());
+            throw new ApplicationException(AppResult.failed(ResultCode.FAILED_PARAMS_VALIDATE));
+        }
+        //2-构建要更新的帖子对象
+        Article updateArticle = new Article();
+        updateArticle.setId(id);
+        updateArticle.setTitle(title);
+        updateArticle.setContent(content);
+        updateArticle.setUpdateTime(new Date());
+
+        //3-调用dao
+        int row = articleMapper.updateByPrimaryKeySelective(updateArticle);
+        if(row != 1) {
+            log.warn(ResultCode.ERROR_SERVICES.toString());
+            throw new ApplicationException(AppResult.failed(ResultCode.ERROR_SERVICES));
+        }
+    }
+    @Override
+    public Article selectById(Long id) {
+        if(id == null || id <= 0){
+            log.warn(ResultCode.FAILED_PARAMS_VALIDATE.toString());
+            throw new ApplicationException(AppResult.failed(ResultCode.FAILED_PARAMS_VALIDATE));
+        }
+
+        Article article = articleMapper.selectByPrimaryKey(id);
+
+        return article;
+    }
 }

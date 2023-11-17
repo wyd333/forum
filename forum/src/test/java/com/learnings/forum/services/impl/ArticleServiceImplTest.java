@@ -60,4 +60,16 @@ class ArticleServiceImplTest {
         Article article = articleService.selectDetailById(1L);
         System.out.println(objectMapper.writeValueAsString(article));
     }
+
+    @Test
+    void modify() {
+        articleService.modify(1L,"单元测试111", "帖子内容111");
+        System.out.println("更新成功！");
+    }
+
+    @Test
+    void selectById() throws JsonProcessingException {
+        Article article = articleService.selectById(1L);
+        System.out.println(objectMapper.writeValueAsString(article));
+    }
 }
