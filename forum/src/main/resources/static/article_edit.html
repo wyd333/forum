@@ -94,6 +94,8 @@
         //判断状态码
         if(respData.code == 0) {
           let article = respData.data;
+          //0-设置帖子id
+          $('#edit_article_id').val(article.id);
           //1-设置板块名
           $('#edit_article_board_name').html(">" + article.board.name);
           //2-设置标题
@@ -155,6 +157,17 @@
     $('#edit_article_submit').click(function () {
         // ID
         let articleIdEl = $('#edit_article_id');
+        if(!articleIdEl.val()){
+          // 提示
+          $.toast({
+            heading: '提示',
+            text: '帖子状态异常',
+            icon: 'warning'
+          });
+          return;
+        }
+
+        //标题
         let articleTitleEl = $('#edit_article_title');
         if (!articleTitleEl.val()) {
           articleTitleEl.focus();
@@ -180,10 +193,46 @@
       }
 
         // 构造修改对象
+      let postData = {
+        id : articleIdEl.val(),
+        title : articleTitleEl.val(),
+        content : articleContentEl.val()
+      };
 
         // 发送修改请求, 成功后跳转至首页changeNavActive($('#nav_board_index'));
         $.ajax({
-
+          url: 'article/modify',
+          type: 'post',
+          contentType: 'application/x-www-form-urlencoded',
+          data: postData,
+          //回调
+          success: function (respData) {
+            if(respData.code == 0) {
+              //成功
+              $.toast({
+                heading: 'Success',
+                text: '更新成功！',
+                icon: 'success'
+              });
+              //跳转至主页列表
+              changeNavActive($('#nav_board_index'));
+            }else{
+              //失败
+              //提示信息
+              $.toast({
+                heading: 'Warning',
+                text: respData.message,
+                icon: 'warning'
+              });
+            }
+          },
+          error: function (){
+            $.toast({
+              heading: 'Error',
+              text: '出现问题，请与管理员联系',
+              icon: 'error'
+            });
+          }
         });
     });
     
