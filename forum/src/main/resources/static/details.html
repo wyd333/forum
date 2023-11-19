@@ -483,7 +483,6 @@
             icon: 'error'
           });
         }
-        
       });
     });
 
@@ -515,12 +514,38 @@
     });
 
     // ====================== 处理删除事件 ======================
-    // 成功后，调用changeNavActive($('#nav-link-title'));  回到首页
-    // url: 'article/delete?id=' + $('#details_article_id').val()
     $('#details_artile_delete').click(function () {
       $.ajax({
-        
-
+        url: 'article/delete?id=' + $('#details_article_id').val(),
+        type: 'post',
+//回调
+        success: function (respData) {
+          if(respData.code == 0) {
+            //成功提示
+            $.toast({
+              heading: 'Success',
+              text: '删除成功！',
+              icon: 'success'
+            });
+            //跳转到首页帖子列表
+            changeNavActive($('#nav-link-title'));
+          }else{
+            //失败
+            //提示信息
+            $.toast({
+              heading: 'Warning',
+              text: respData.message,
+              icon: 'warning'
+            });
+          }
+        },
+        error: function (){
+          $.toast({
+            heading: 'Error',
+            text: '出现问题，请与管理员联系',
+            icon: 'error'
+          });
+        }
       });
 
     });

@@ -20,17 +20,22 @@ public interface IBoardService {
     List<Board> selectByNum(Integer num);
 
     /**
-     * 根据板块id查询板块信息
-     * @param id 板块id
+     * 根据版块id查询版块信息
+     * @param id 版块id
      * @return
      */
     Board selectById(Long id);
 
 
     /**
-     * 更新板块中的帖子数据
-     * @param id 板块id
+     * 版块中的帖子数 + 1
+     * @param id 版块id
      */
     void addOneArticleCountById(Long id);
 
+    /**
+     * 版块中帖子数-1
+     * @param id 版块id
+     */
+    void subOneArticleCountById(Long id);
 }

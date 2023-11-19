@@ -13,7 +13,7 @@ import java.util.List;
 
 /**
  * Created with IntelliJ IDEA.
- * Description: BoardServiceImpl测试类
+ * Description: 版块service测试类
  * User: 12569
  * Date: 2023-10-29
  * Time: 22:58
@@ -43,5 +43,12 @@ class BoardServiceImplTest {
     void selectById() throws JsonProcessingException {
         Board board = boardService.selectById(10L);
         System.out.println(objectMapper.writeValueAsString(board));
+    }
+
+    @Test
+    @Transactional
+    void subOneArticleCountById() {
+        boardService.subOneArticleCountById(7L);
+        System.out.println("ok!");
     }
 }

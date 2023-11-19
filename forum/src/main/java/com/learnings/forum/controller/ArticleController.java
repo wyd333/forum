@@ -174,6 +174,7 @@ public class ArticleController {
         return AppResult.success();
     }
 
+    @ApiOperation("点赞")
     @PostMapping("/thumbs_up")
     public AppResult thumbsUp(HttpServletRequest request,
                                 @ApiParam("帖子Id") @RequestParam("id") @NonNull Long id) {
@@ -186,6 +187,34 @@ public class ArticleController {
         //2-调用service
         articleService.thumbsUpById(id);
         //3-返回结果
+        return AppResult.success();
+    }
+
+    @ApiOperation("删除帖子")
+    @PostMapping("/delete")
+    public AppResult deleteById(HttpServletRequest request,
+                                @ApiParam("帖子Id") @RequestParam("id") @NonNull Long id){
+        //1-校验用户状态
+        HttpSession session = request.getSession(false);
+        User user = (User) session.getAttribute(AppConfig.USER_SESSION);
+        if(user.getState() == 1) {
+            //用户已被禁言
+            return AppResult.failed(ResultCode.FAILED_USER_BANNED);
+        }
+        //2-查询帖子详情
+        Article article = articleService.selectById(id);
+        if(article == null || article.getDeleteState() == 1) {
+            //帖子已删除
+            return AppResult.failed(ResultCode.FAILED_ARTICLE_NOT_EXISTS);
+        }
+        //3-校验当前用户是否是作者
+        if(!user.getId().equals(article.getUserId())) {
+            return AppResult.failed(ResultCode.FAILED_FORBIDDEN);
+        }
+
+        //4-调用service
+        articleService.deleteById(id);
+        //5-返回成功信息
         return AppResult.success();
     }
 }

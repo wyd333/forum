@@ -59,4 +59,10 @@ public interface IArticleService {
      */
     void thumbsUpById (Long id);
 
+    /**
+     * 根据id删除帖子
+     * @param id 帖子id
+     */
+    void deleteById (Long id);
+
 }

@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Created with IntelliJ IDEA.
- * Description:
+ * Description: 文章service测试类
  * User: 12569
  * Date: 2023-11-02
  * Time: 22:51
@@ -31,6 +31,7 @@ class ArticleServiceImplTest {
     private ObjectMapper objectMapper;
 
     @Test
+    @Transactional
     void create() {
         Article article = new Article();
         article.setUserId(1L);
@@ -62,6 +63,7 @@ class ArticleServiceImplTest {
     }
 
     @Test
+    @Transactional
     void modify() {
         articleService.modify(1L,"单元测试111", "帖子内容111");
         System.out.println("更新成功！");
@@ -74,8 +76,16 @@ class ArticleServiceImplTest {
     }
 
     @Test
+    @Transactional
     void thumbsUpById() {
         articleService.thumbsUpById(1L);
+        System.out.println("ok!");
+    }
+
+    @Test
+    @Transactional
+    void deleteById() {
+        articleService.deleteById(7L);
         System.out.println("ok!");
     }
 }

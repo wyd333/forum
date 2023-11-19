@@ -12,7 +12,7 @@ import javax.annotation.Resource;
 
 /**
  * Created with IntelliJ IDEA.
- * Description: UserService测试类
+ * Description: 用户service测试类
  * User: 12569
  * Date: 2023-10-07
  * Time: 21:13
@@ -73,5 +73,12 @@ class UserServiceImplTest {
     void addOneArticleCountById() {
         userService.addOneArticleCountById(1L);
         System.out.println("更新成功");
+    }
+
+    @Test
+    @Transactional
+    void subOneArticleCountById() {
+        userService.subOneArticleCountById(7L);
+        System.out.println("ok!");
     }
 }
