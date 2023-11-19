@@ -173,4 +173,19 @@ public class ArticleController {
         log.info("更新帖子成功：Article Id = " + id + ", User Id = " + user.getId());
         return AppResult.success();
     }
+
+    @PostMapping("/thumbs_up")
+    public AppResult thumbsUp(HttpServletRequest request,
+                                @ApiParam("帖子Id") @RequestParam("id") @NonNull Long id) {
+        //1-校验用户状态
+        HttpSession session = request.getSession(false);
+        User user = (User) session.getAttribute(AppConfig.USER_SESSION);
+        if(user.getState() == 1) {
+            return AppResult.failed(ResultCode.FAILED_USER_BANNED);
+        }
+        //2-调用service
+        articleService.thumbsUpById(id);
+        //3-返回结果
+        return AppResult.success();
+    }
 }

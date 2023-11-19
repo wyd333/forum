@@ -284,7 +284,6 @@
           icon: 'error'
         });
       }
-
     });
 
     // ===================== 初始化页面内空 ======================
@@ -450,10 +449,40 @@
 
 
     // ====================== 处理点赞 ======================
-    // url: '/article/thumbsUp?id=' + currentArticle.id
-    // 成功后，修改点赞个数 currentArticle.likeCount = currentArticle.likeCount + 1;
     $('#details_btn_like_count').click(function () {
       $.ajax({
+        url: 'article/thumbs_up?id=' + currentArticle.id,
+        type: 'post',
+        //回调
+        success: function (respData) {
+          if(respData.code == 0) {
+            //成功
+            currentArticle.likeCount = currentArticle.likeCount+1;
+            //设置页面的值
+            $('#details_article_likeCount').html(currentArticle.likeCount);
+            //提示
+            $.toast({
+              heading: 'Success',
+              text: '点赞成功！',
+              icon: 'success'
+            });
+          }else{
+            //失败
+            //提示信息
+            $.toast({
+              heading: 'Warning',
+              text: respData.message,
+              icon: 'warning'
+            });
+          }
+        },
+        error: function (){
+          $.toast({
+            heading: 'Error',
+            text: '出现问题，请与管理员联系',
+            icon: 'error'
+          });
+        }
         
       });
     });

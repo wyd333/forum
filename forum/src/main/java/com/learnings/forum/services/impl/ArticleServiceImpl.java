@@ -190,4 +190,35 @@ public class ArticleServiceImpl implements IArticleService {
 
         return article;
     }
+
+    @Override
+    public void thumbsUpById(Long id) {
+        //1-非空校验
+        if(id == null || id <= 0){
+            log.warn(ResultCode.FAILED_PARAMS_VALIDATE.toString());
+            throw new ApplicationException(AppResult.failed(ResultCode.FAILED_PARAMS_VALIDATE));
+        }
+        //2-获取帖子详情
+        Article article = articleMapper.selectByPrimaryKey(id);
+        if(article == null || article.getDeleteState() == 1 ) {
+            log.warn(ResultCode.FAILED_ARTICLE_NOT_EXISTS.toString());
+            throw new ApplicationException(AppResult.failed(ResultCode.FAILED_ARTICLE_NOT_EXISTS));
+        }
+        if(article.getState() == 1) {
+            log.warn(ResultCode.FAILED_ARTICLE_BANNED.toString());
+            throw new ApplicationException(AppResult.failed(ResultCode.FAILED_ARTICLE_BANNED));
+        }
+        //3-构造要更新的对象
+        Article updateArticle = new Article();
+        updateArticle.setId(article.getId());
+        updateArticle.setLikeCount(article.getLikeCount()+1);
+        updateArticle.setUpdateTime(new Date());
+
+        //4-调用dao
+        int row = articleMapper.updateByPrimaryKeySelective(updateArticle);
+        if(row != 1) {
+            log.warn(ResultCode.ERROR_SERVICES.toString());
+            throw new ApplicationException(AppResult.failed(ResultCode.ERROR_SERVICES));
+        }
+    }
 }
