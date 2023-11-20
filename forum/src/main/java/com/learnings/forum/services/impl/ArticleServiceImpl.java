@@ -20,7 +20,7 @@ import java.util.List;
 
 /**
  * Created with IntelliJ IDEA.
- * Description:
+ * Description:实现ArticleService
  * User: 12569
  * Date: 2023-10-31
  * Time: 23:31
@@ -250,5 +250,38 @@ public class ArticleServiceImpl implements IArticleService {
         //6-更新用户发帖数
         userService.subOneArticleCountById(article.getUserId());
         log.info("删除帖子成功, article id = " + article.getId() + ", user id = " + article.getUserId());
+    }
+
+    @Override
+    public void addOneReplyCountById(Long id) {
+        //1-非空校验
+        if(id == null || id <= 0){
+            log.warn(ResultCode.FAILED_PARAMS_VALIDATE.toString());
+            throw new ApplicationException(AppResult.failed(ResultCode.FAILED_PARAMS_VALIDATE));
+        }
+        //2-获取帖子信息
+        //帖子已删除
+        Article article = articleMapper.selectByPrimaryKey(id);
+        if(article == null || article.getDeleteState() == 1) {
+            log.warn(ResultCode.FAILED_ARTICLE_NOT_EXISTS.toString());
+            throw new ApplicationException(AppResult.failed(ResultCode.FAILED_ARTICLE_NOT_EXISTS));
+        }
+        //帖子已封帖
+        if(article.getState() == 1) {
+            log.warn(ResultCode.FAILED_ARTICLE_BANNED.toString());
+            throw new ApplicationException(AppResult.failed(ResultCode.FAILED_ARTICLE_BANNED));
+        }
+
+        Article updateArticle = new Article();
+        updateArticle.setId(article.getId());
+        //回复数 = 原回复数+1
+        updateArticle.setReplyCount(article.getReplyCount()+1);
+        updateArticle.setUpdateTime(new Date());
+        //3-执行更新操作
+        int row = articleMapper.updateByPrimaryKeySelective(updateArticle);
+        if(row != 1) {
+            log.warn(ResultCode.ERROR_SERVICES.toString());
+            throw new ApplicationException(AppResult.failed(ResultCode.ERROR_SERVICES));
+        }
     }
 }

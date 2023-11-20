@@ -9,10 +9,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
-
 import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Created with IntelliJ IDEA.
@@ -86,6 +83,13 @@ class ArticleServiceImplTest {
     @Transactional
     void deleteById() {
         articleService.deleteById(7L);
+        System.out.println("ok!");
+    }
+
+    @Test
+    @Transactional
+    void addOneReplyCountById() {
+        articleService.addOneReplyCountById(1L);
         System.out.println("ok!");
     }
 }
