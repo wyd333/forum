@@ -14,14 +14,12 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.util.List;
 
 /**
  * Created with IntelliJ IDEA.
@@ -76,5 +74,21 @@ public class ArticleReplyController {
         articleReplyService.create(articleReply);
 
         return AppResult.success();
+    }
+
+    @ApiOperation("获取回复列表")
+    @GetMapping("/get_replies")
+    public AppResult<List<ArticleReply>> getRepliesByArticleId(@ApiParam("帖子id") @RequestParam("articleId") @NonNull Long articleId){
+        //1-校验帖子是否存在
+        Article article = articleService.selectById(articleId);
+        if(article == null || article.getDeleteState() == 1) {
+            log.warn(ResultCode.FAILED_ARTICLE_NOT_EXISTS.toString());
+            return AppResult.failed(ResultCode.FAILED_ARTICLE_NOT_EXISTS);
+        }
+        //2-调用service
+        List<ArticleReply> articleReplies = articleReplyService.selectByArticleId(articleId);
+        //3-返回结果
+        return AppResult.success(articleReplies);
+
     }
 }

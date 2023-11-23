@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.Date;
+import java.util.List;
 
 /**
  * Created with IntelliJ IDEA.
@@ -57,5 +58,18 @@ public class ArticleReplyServiceImpl implements IArticleReplyService {
         //4-更新帖子表中的回复数
         articleService.addOneReplyCountById(articleReply.getArticleId());
         log.info("帖子回复成功，article Id = " + articleReply.getArticleId() + ",user Id = " + articleReply.getPostUserId());
+    }
+
+    @Override
+    public List<ArticleReply> selectByArticleId(Long articleId) {
+        //1-非空校验
+        if(articleId == null || articleId <= 0) {
+            log.warn(ResultCode.FAILED_PARAMS_VALIDATE.toString());
+            throw new ApplicationException(AppResult.failed(ResultCode.FAILED_PARAMS_VALIDATE));
+        }
+        //2-调用dao
+        List<ArticleReply> result = articleReplyMapper.selectByArticleId(articleId);
+
+        return result;
     }
 }

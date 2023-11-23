@@ -3,6 +3,8 @@ package com.learnings.forum.services;
 import com.learnings.forum.model.ArticleReply;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 /**
  * Created with IntelliJ IDEA.
  * Description: 帖子回复
@@ -18,4 +20,11 @@ public interface IArticleReplyService {
      */
     @Transactional
     void create(ArticleReply articleReply);
+
+    /**
+     * 根据帖子id查询所有回复
+     * @param articleId
+     * @return
+     */
+    List<ArticleReply> selectByArticleId(Long articleId);
 }

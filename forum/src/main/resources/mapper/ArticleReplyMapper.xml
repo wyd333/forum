@@ -15,8 +15,17 @@
     <result column="updateTime" jdbcType="TIMESTAMP" property="updateTime" />
   </resultMap>
   <sql id="Base_Column_List">
-    id, articleId, postUserId, replyId, replyUserId, content, likeCount, state, deleteState, 
-    createTime, updateTime
+    id,
+    articleId,
+    postUserId,
+    replyId,
+    replyUserId,
+    content,
+    likeCount,
+    state,
+    deleteState,
+    createTime,
+    updateTime
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
     select 

@@ -18,7 +18,7 @@
     <result column="content" jdbcType="LONGVARCHAR" property="content" />
   </resultMap>
   <sql id="Base_Column_List">
-    id, boardId, userId, title, visitCount, replyCount, likeCount, state, deleteState, 
+    id, boardId, userId, title, visitCount, replyCount, likeCount, state, deleteState,
     createTime, updateTime
   </sql>
   <sql id="Blob_Column_List">
