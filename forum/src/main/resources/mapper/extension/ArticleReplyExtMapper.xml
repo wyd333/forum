@@ -30,7 +30,7 @@
           where ar.postUserId = u.id
             and ar.articleId = #{articleId, jdbcType=BIGINT}
             and ar.deleteState = 0
-          order by ar.createTime desc
+          order by ar.createTime
 
       </select>
 </mapper>
