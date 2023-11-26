@@ -23,6 +23,7 @@ public class Article {
 
     private Byte state;
 
+
     private Byte deleteState;
 
     private Date createTime;
