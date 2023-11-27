@@ -32,6 +32,13 @@ public interface IArticleService {
     List<Article> selectAllByBoardId(Long boardId);
 
     /**
+     * 根据用户id查询帖子列表
+     * @param userId 用户id
+     * @return 帖子列表
+     */
+    List<Article> selectByUserId(Long userId);
+
+    /**
      * 根据帖子id查询详情
      * @param id 帖子id
      * @return 帖子详情

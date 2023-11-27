@@ -217,4 +217,20 @@ public class ArticleController {
         //5-返回成功信息
         return AppResult.success();
     }
+
+    @ApiOperation("获取用户的帖子列表")
+    @GetMapping("/get_all_by_userid")
+    public AppResult<List<Article>> getAllByUserId(HttpServletRequest request,
+                                    @ApiParam("用户id") @RequestParam(value = "userId",required = false) Long userId){
+        if(userId == null) {
+            //获取session
+            HttpSession session = request.getSession(false);
+            //获取user对象
+            User user = (User) session.getAttribute(AppConfig.USER_SESSION);
+            userId = user.getId();
+        }
+        //调用service
+        List<Article> articles = articleService.selectByUserId(userId);
+        return AppResult.success(articles);
+    }
 }

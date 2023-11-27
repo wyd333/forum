@@ -40,4 +40,11 @@ public interface ArticleMapper {
      */
     Article selectDetailById(@Param("id") Long id);
 
+    /**
+     * 根据用户id查询帖子列表
+     * @param userId 用户id
+     * @return 帖子列表
+     */
+    List<Article> selectByUserId(@Param("userId") Long userId);
+
 }

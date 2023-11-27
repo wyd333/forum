@@ -86,4 +86,26 @@
       and a.deleteState = 0
       and a.id = #{id,jdbcType=BIGINT};
   </select>
+
+<!--  根据用户id查询帖子列表-->
+  <select id="selectByUserId" resultMap="AllInfoResultMap" parameterType="java.lang.Long">
+    select
+      b.id as b_id,
+      b.name as b_name,
+      a.id,
+      a.boardId,
+      a.userId,
+      a.title,
+      a.visitCount,
+      a.replyCount,
+      a.likeCount,
+      a.state,
+      a.createTime,
+      a.updateTime
+    from t_article a, t_board b
+    where a.boardId = b.id
+    and a.deleteState = 0
+    and a.userId = #{userId,jdbcType=BIGINT}
+    order by a.createTime desc
+  </select>
 </mapper>
