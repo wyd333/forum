@@ -171,11 +171,30 @@
       articleListQueryString = '?userId=' + profileUserId
     }
     // ============= 获取当前用户发贴 =============
-    // url: 'article/getAllByUserId' + articleListQueryString
-    // 成功后，调用buildProfileUserArticle()方法，构造帖子列表
-
     $.ajax({
-      
+      url: 'article/get_all_by_userid' + articleListQueryString,
+      type: 'get',
+      //回调
+      success: function (respData) {
+        if(respData.code == 0) {
+          buildProfileUserArticle(respData.data);
+        }else{
+          //提示信息
+          $.toast({
+            heading: 'Warning',
+            text: respData.message,
+            icon: 'warning'
+          });
+        }
+      },
+      error: function (){
+        //http访问出现错误
+        $.toast({
+          heading: 'Error',
+          text: '出现问题，请与管理员联系',
+          icon: 'error'
+        });
+      }
     });
 
     // ============= 构建用户帖子列表 =============

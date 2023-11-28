@@ -27,7 +27,7 @@
         </div>
         <div class="col d-flex flex-column">
           <div class="card-body">
-            <h2 id="settings_nickname" class="mb-4">比特鑫哥</h2>
+            <h2 id="settings_nickname" class="mb-4"></h2>
             <input type="text" style="display: none;" id="settings_user_id">
             <div class="row align-items-center">
               <div class="col-auto">
@@ -191,9 +191,31 @@
 <script>
   $(function() {
     // ================= 获取用户详情，初始化页面内容 =================
-    // 发送AJAX请求，成功时 调用initUserInfo方法，完成页面数据初始化
     $.ajax({
-      
+      url: 'user/info',
+      type: 'get',
+      //回调
+      success: function (respData) {
+        if(respData.code == 0) {
+          //初始化用户数据
+          initUserInfo(respData.data);
+        }else{
+          //提示信息
+          $.toast({
+            heading: 'Warning',
+            text: respData.message,
+            icon: 'warning'
+          });
+        }
+      },
+      error: function (){
+        //http访问出现错误
+        $.toast({
+          heading: 'Error',
+          text: '出现问题，请与管理员联系',
+          icon: 'error'
+        });
+      }
     });
   });
 
