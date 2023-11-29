@@ -24,6 +24,7 @@ public enum ResultCode {
     FAILED_USER_BANNED              (1104, "您已被禁言, 请联系管理员, 并重新登录."),
     FAILED_TWO_PWD_NOT_SAME         (1105, "两次输入的密码不一致"),
     FAILED_USER_ARTICLE_COUNT      (1106,"更新帖子数量失败"),
+        FAILED_USER_EXISTS      (1107,"用户已存在"),
 
 
     //      板块相关

@@ -188,4 +188,115 @@ public class UserServiceImpl implements IUserService {
             throw new ApplicationException(AppResult.failed(ResultCode.FAILED));
         }
     }
+
+    @Override
+    public void modifyInfo(User user) {
+        //1-非空校验
+        if(user == null || user.getId() == null || user.getId() <= 0) {
+            //打印日志
+            log.warn(ResultCode.FAILED_PARAMS_VALIDATE.toString());
+            //抛出异常
+            throw new ApplicationException(AppResult.failed(ResultCode.FAILED_PARAMS_VALIDATE));
+        }
+
+        //2-校验用户是否存在
+        User existsUser = userMapper.selectByPrimaryKey(user.getId());
+        if(existsUser == null) {
+            //打印日志
+            log.warn(ResultCode.FAILED_USER_NOT_EXISTS.toString());
+            //抛出异常
+            throw new ApplicationException(AppResult.failed(ResultCode.FAILED_USER_NOT_EXISTS));
+        }
+
+        //3-定义一个标志位用于校验参数
+        boolean checkAttr = false;  //false表示没有校验通过
+
+        //4-定义一个专门用来更新的对象，防止传入的对象设置过其他的属性
+        //在使用动态sql操作数据库时，覆盖了没有经过校验的字段
+        User updateUser = new User();
+        //5-设置用户id
+        updateUser.setId(user.getId());
+
+        //6-对每一个参数进行校验并赋值
+        //校验 username
+        if(!StringUtil.isEmpty(user.getUsername())
+        && !user.getUsername().equals(existsUser.getUsername())) {
+            //需要更新用户名时，进行唯一性校验
+            User checkUser = userMapper.selectByUserName(user.getUsername());
+            if(checkUser != null) {
+                //用户已存在
+                log.warn(ResultCode.FAILED_USER_EXISTS.toString());
+                //抛出异常
+                throw new ApplicationException(AppResult.failed(ResultCode.FAILED_USER_EXISTS));
+            }
+
+            //修改用户名
+            updateUser.setUsername(user.getUsername());
+            //更新标志位
+            checkAttr = true;
+        }
+
+        //校验 nickname
+        if(!StringUtil.isEmpty(user.getNickname())
+                && !user.getNickname().equals(existsUser.getNickname())) {
+            //修改昵称
+            updateUser.setNickname(user.getNickname());
+            //更新标志位
+            checkAttr = true;
+        }
+
+        //校验 gender
+        if(user.getGender() != null
+                && !user.getGender().equals(existsUser.getGender())) {
+            //修改性别
+            updateUser.setGender(user.getGender());
+            //合法性校验
+            if(updateUser.getGender() > 2 || updateUser.getGender() < 0) {
+                updateUser.setGender((byte) 2);
+            }
+            //更新标志位
+            checkAttr = true;
+        }
+
+        //校验 email
+        if(!StringUtil.isEmpty(user.getEmail())
+                && !user.getEmail().equals(existsUser.getEmail())) {
+            //修改邮箱
+            updateUser.setEmail(user.getEmail());
+            //更新标志位
+            checkAttr = true;
+        }
+
+        //校验 phoneNum
+        if(!StringUtil.isEmpty(user.getPhoneNum())
+                && !user.getPhoneNum().equals(existsUser.getPhoneNum())) {
+            //修改电话号码
+            updateUser.setPhoneNum(user.getPhoneNum());
+            //更新标志位
+            checkAttr = true;
+        }
+        //校验 remark
+        if(!StringUtil.isEmpty(user.getRemark())
+                && !user.getRemark().equals(existsUser.getRemark())) {
+            //修改个人简介
+            updateUser.setRemark(user.getRemark());
+            //更新标志位
+            checkAttr = true;
+        }
+
+        //7-根据标志位来确定是否可以执行更新
+        if(!checkAttr) {
+            //打印日志
+            log.warn(ResultCode.FAILED_PARAMS_VALIDATE.toString());
+            //抛出异常
+            throw new ApplicationException(AppResult.failed(ResultCode.FAILED_PARAMS_VALIDATE));
+        }
+
+        //8-调用dao
+        int row = userMapper.updateByPrimaryKeySelective(updateUser);
+        if(row != 1) {
+            log.warn(ResultCode.FAILED.toString() + ", 受影响的行数 != 1");
+            throw new ApplicationException(AppResult.failed(ResultCode.FAILED));
+        }
+    }
 }
