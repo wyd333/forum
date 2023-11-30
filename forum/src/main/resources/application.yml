@@ -12,6 +12,7 @@ spring:
   jackson: # JSON序列化配置
     date-format: yyyy-MM-dd HH:mm:ss # 日期格式
     default-property-inclusion: NON_NULL # 不为null时序列化
+    time-zone: GMT+8
 
 # mybatis 相关配置，单独配置，顶格写
 mybatis:

@@ -6,6 +6,7 @@ import com.learnings.forum.config.AppConfig;
 import com.learnings.forum.model.User;
 import com.learnings.forum.services.IUserService;
 import com.learnings.forum.utils.MD5Util;
+import com.learnings.forum.utils.StringUtil;
 import com.learnings.forum.utils.UUIDUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -140,5 +141,45 @@ public class UserController {
             session.invalidate();
         }
         return AppResult.success("退出成功");
+    }
+
+
+    @PostMapping("/modifyinfo")
+    @ApiOperation("修改个人信息")
+    public AppResult modifyInfo(HttpServletRequest request,
+                                @ApiParam("用户名") @RequestParam(value = "username",required = false) String username,
+                                @ApiParam("昵称") @RequestParam(value = "nickname",required = false) String nickname,
+                                @ApiParam("性别") @RequestParam(value = "gender",required = false) Byte gender,
+                                @ApiParam("邮箱") @RequestParam(value = "email",required = false) String email,
+                                @ApiParam("电话号码") @RequestParam(value = "phoneNum",required = false) String phoneNum,
+                                @ApiParam("个人简介") @RequestParam(value = "remark",required = false) String remark){
+        //1-接收参数
+        //2-非空校验，若全为空则返回错误描述
+        if(StringUtil.isEmpty(username)
+                && StringUtil.isEmpty(nickname)
+                && StringUtil.isEmpty(email)
+                && StringUtil.isEmpty(phoneNum)
+                && StringUtil.isEmpty(remark)
+                && gender == null) {
+            //返回错误信息
+            return AppResult.failed("请输入要修改的内容！");
+        }
+        //3-封装对象
+        User updateUser = new User();
+        HttpSession session = request.getSession(false);
+        User user = (User) session.getAttribute(AppConfig.USER_SESSION);
+        updateUser.setId(user.getId());
+        updateUser.setUsername(username);
+        updateUser.setNickname(nickname);
+        updateUser.setGender(gender);
+        updateUser.setEmail(email);
+        updateUser.setPhoneNum(phoneNum);
+        updateUser.setRemark(remark);
+
+        //4-调用service方法
+        userService.modifyInfo(updateUser);
+
+        //5-返回结果
+        return AppResult.success();
     }
 }

@@ -86,9 +86,9 @@ class UserServiceImplTest {
     @Transactional
     void modifyInfo() {
         User user = new User();
-        user.setId(2L);
-//        user.setUsername("lisi");
-        user.setNickname(null);
+        user.setId(7L);
+//        user.setUsername("xxxxxx");
+//        user.setNickname("oppo");
 //        user.setGender((byte) 3);
 //        user.setEmail("123@qq.com");
 //        user.setPhoneNum("6666666");
