@@ -253,11 +253,6 @@
       return;
     }
 
-    // 构造query string
-    let searchParams = new URLSearchParams(userInfo);
-    let queryString = '?' + searchParams.toString();
-    console.log(queryString);
-
     // 定义接口路径
     let userURL = 'user/modifyInfo';
     if (type == 1) {
@@ -268,9 +263,46 @@
 
     // 发送请求，提示响应结果
     $.ajax({
-      
-    });
+      url: userURL,
+      type: 'post',
+      contentType: 'application/x-www-form-urlencoded',
+      data: userInfo,
+      //回调
+      success: function (respData) {
+        if(respData.code == 0) {
+          //获取用户对象
+          let user = respData.data;
 
+          //更新页面中的内容
+          //user对象有效且昵称有效
+          if(user && user.nickname) {
+              //个人中心页面中的昵称
+              $('#settings_nickname').html(user.nickname);
+              //导航栏昵称
+              $('#index_nav_nickname').html(user.nickname);
+          }
+          $.toast({
+            heading: 'Success',
+            text: respData.message,
+            icon: 'success'
+          })
+        }else{
+          //提示信息
+          $.toast({
+            heading: 'Warning',
+            text: respData.message,
+            icon: 'warning'
+          })
+        }
+      },
+      error: function () {
+        $.toast({
+          heading: 'Error',
+          text: '出现问题，请与管理员联系',
+          icon: 'error'
+        })
+      }
+    });
   }
 
   // ================= 处理选择头像事件 =================
@@ -290,7 +322,6 @@
     }
     // 构造数据
     let nicknameObj = {
-      id : $('#settings_user_id').val(),
       nickname : nicknameEl.val()
     }
     // 发送请求
@@ -308,7 +339,6 @@
     }
     // 构造数据
     let emailObj = {
-      id : $('#settings_user_id').val(),
       email : emailEl.val()
     }
     // 发送请求
@@ -326,7 +356,6 @@
     }
     // 构造数据
     let phoneNumObj = {
-      id : $('#settings_user_id').val(),
       phoneNum : phoneNumEl.val()
     }
     // 发送请求
@@ -345,7 +374,6 @@
     }
     // 构造数据
     let remarkObj = {
-      id : $('#settings_user_id').val(),
       remark : remarkEl.val()
     }
     // 发送请求

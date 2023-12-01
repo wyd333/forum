@@ -144,7 +144,7 @@ public class UserController {
     }
 
 
-    @PostMapping("/modifyinfo")
+    @PostMapping("/modifyInfo")
     @ApiOperation("修改个人信息")
     public AppResult modifyInfo(HttpServletRequest request,
                                 @ApiParam("用户名") @RequestParam(value = "username",required = false) String username,
@@ -179,7 +179,13 @@ public class UserController {
         //4-调用service方法
         userService.modifyInfo(updateUser);
 
+        //5-查询最新的用户信息
+        user = userService.selectById(user.getId());
+
+        //6-把最新的用户信息设置到session中
+        session.setAttribute(AppConfig.USER_SESSION,user);
+
         //5-返回结果
-        return AppResult.success();
+        return AppResult.success(user);
     }
 }
