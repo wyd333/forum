@@ -24,7 +24,10 @@ public enum ResultCode {
     FAILED_USER_BANNED              (1104, "您已被禁言, 请联系管理员, 并重新登录."),
     FAILED_TWO_PWD_NOT_SAME         (1105, "两次输入的密码不一致"),
     FAILED_USER_ARTICLE_COUNT      (1106,"更新帖子数量失败"),
-        FAILED_USER_EXISTS      (1107,"用户已存在"),
+    FAILED_USER_EXISTS      (1107,"用户已存在"),
+    FAILED_CODE_ERROR      (1108,"验证码异常"),
+    FAILED_EMAIL_ERROR      (1109,"邮箱错误"),
+    FAILED_EMAILCODE      (1109,"验证码校验失败"),
 
 
     //      板块相关
@@ -34,7 +37,7 @@ public enum ResultCode {
 
     //帖子相关
     FAILED_ARTICLE_NOT_EXISTS          (1301, "帖子不存在"),
-    FAILED_ARTICLE_BANNED          (13012, "作者已结帖~不可回复！"),
+    FAILED_ARTICLE_BANNED          (1302, "作者已结帖~不可回复！"),
 
 
     //    服务器相关

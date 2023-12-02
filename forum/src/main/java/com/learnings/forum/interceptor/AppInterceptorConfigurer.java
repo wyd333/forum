@@ -32,6 +32,8 @@ public class AppInterceptorConfigurer implements WebMvcConfigurer {
         .excludePathPatterns("/user/login") // 排除登录api接⼝
         .excludePathPatterns("/user/register") // 排除注册api接⼝
         .excludePathPatterns("/user/logout") // 排除退出api接⼝
+        .excludePathPatterns("/user/mail") // 排除发送邮箱验证码接口
+        .excludePathPatterns("/user/email_code") // 排除验证邮箱验证码接口
         .excludePathPatterns("/swagger*/**") // 排除登录swagger下所有
         .excludePathPatterns("/v3*/**") // 排除登录v3下所有，与swagger相关
         .excludePathPatterns("/dist/**") // 排除所有静态⽂件

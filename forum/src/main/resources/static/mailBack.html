@@ -1,0 +1,134 @@
+<!doctype html>
+
+<html lang="zh-CN">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <link rel="shortcut icon" href="/favicon.ico">
+    <title>FoxForum技术论坛 - 用户密码找回</title>
+    <!-- 导入CSS -->
+    <link href="./dist/css/tabler.min.css?1674944402" rel="stylesheet" />
+    <link rel="stylesheet" href="./dist/css/jquery.toast.css">
+    <!-- 设置字体 -->
+    <!-- <style>
+        @import url('https://rsms.me/inter/inter.css');
+        :root {
+            --tblr-font-sans-serif: 'Inter Var', -apple-system, BlinkMacSystemFont, San Francisco, Segoe UI, Roboto, Helvetica Neue, sans-serif;
+        }
+        body {
+            font-feature-settings: "cv03", "cv04", "cv11";
+        }
+      </style> -->
+</head>
+
+<body class="d-flex flex-column">
+<!-- 正文 -->
+<div class="page page-center">
+    <div class="container container-tight py-4">
+        <div class="text-center mb-4">
+            <img src="./image/foxforum-logo01.png" height="0" alt="">
+        </div>
+        <form id="signUpForm" class="card card-md" autocomplete="off" novalidate>
+            <div class="card-body">
+                <h2 class="text-center mb-4">找回密码</h2>
+                <!-- 验证码 -->
+                <div class="mb-3">
+                    <label class="form-label required">验证码</label>
+                    <input type="text" class="form-control " placeholder="请输入验证码" name="EmailCode" id="EmailCode">
+                    <div class="invalid-feedback">验证码不能为空</div>
+                </div>
+
+                <div class="form-footer">
+                    <button type="button" class="btn btn-primary w-100" id="submit">校验验证码</button>
+                </div>
+            </div>
+        </form>
+        <div class="text-center text-muted mt-3">
+            <a href="./sign-in.html" tabindex="-1">登录</a>
+        </div>
+    </div>
+</div>
+</body>
+<!-- 导入JS -->
+<script src="./dist/js/tabler.min.js"></script>
+<script src="./dist/js/jquery-3.6.3.min.js"></script>
+<script src="./dist/js/jquery.toast.js"></script>
+<script>
+
+    $(function () {
+        // 获取表单并校验
+        $('#submit').click(function () {
+            let checkForm = true;
+            // 校验验证码
+            if (!$('#EmailCode').val()) {
+                $('#EmailCode').addClass('is-invalid');
+                checkForm = false;
+            }
+
+            // 根据判断结果提交表单
+            if (!checkForm) {
+                return false;
+            }
+
+            // 构造数据
+            let postData = {
+                emailCode : $('#EmailCode').val()
+            };
+
+            // 发送AJAX请求
+            // contentType = application/x-www-form-urlencoded
+            // 成功后跳转到 sign-in.html
+            $.ajax ({
+                url : '/user/email_code',
+                type : 'post',
+                contentType : 'application/x-www-form-urlencoded',
+                data : postData,
+
+                success : function (respData) {
+                    if (respData.code == 0){
+                        //验证成功
+                        $.toast({
+                            heading: 'Success',
+                            text: "校验成功！正在跳转...",
+                            icon: 'success'
+                        });
+                        //跳转到修改密码页面
+                        // location.href = '/chang_password.html';
+                    }else {
+                        $.toast({
+                            heading: 'Warning',
+                            text: respData.message,
+                            icon: 'warning'
+                        });
+                    }
+                },
+
+                error: function () {
+                    $.toast({
+                        heading: 'Error',
+                        text: '出现问题，请与管理员联系',
+                        icon: 'error'
+                    })
+                }
+
+            });
+        });
+
+        // 表单元单独检验
+        $('#EmailCode').on('blur', function () {
+            if ($(this).val()) {
+                $(this).removeClass('is-invalid');
+                $(this).addClass('is-valid');
+            } else {
+                $(this).removeClass('is-valid');
+                $(this).addClass('is-invalid');
+            }
+        })
+    });
+
+
+</script>
+
+</html>

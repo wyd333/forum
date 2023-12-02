@@ -13,13 +13,28 @@ spring:
     date-format: yyyy-MM-dd HH:mm:ss # 日期格式
     default-property-inclusion: NON_NULL # 不为null时序列化
     time-zone: GMT+8
+#  redis:  #redis的配置信息
+#    host: 127.0.0.1
+#    port: 6379
+#    database: 2
+#    password:
+#  session:  #session存储类型
+#    store-type: redis
+#    redis:
+#      flush-mode: on_save
+#      namespace: spring:session
+
+server:
+  port: 1224
+#  servlet:
+#    session:
+#      timeout: 1800
 
 # mybatis 相关配置，单独配置，顶格写
 mybatis:
   mapper-locations: classpath:mapper/**/*.xml   # 指定 xxxMapper.xml的扫描路径
 
-server:
-  port: 1224
+
 
 logging:
   level:

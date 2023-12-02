@@ -6,6 +6,7 @@ import com.learnings.forum.config.AppConfig;
 import com.learnings.forum.model.User;
 import com.learnings.forum.services.IUserService;
 import com.learnings.forum.utils.MD5Util;
+import com.learnings.forum.utils.SendEmailUtil;
 import com.learnings.forum.utils.StringUtil;
 import com.learnings.forum.utils.UUIDUtil;
 import io.swagger.annotations.Api;
@@ -13,6 +14,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.mail.EmailException;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -187,5 +189,58 @@ public class UserController {
 
         //5-返回结果
         return AppResult.success(user);
+    }
+
+    @ApiOperation("发送验证码")
+    @PostMapping("/mail")
+    public AppResult mail(HttpServletRequest request,
+                          @ApiParam("用户名") @RequestParam("username") @NonNull String username,
+                          @ApiParam("邮箱") @RequestParam("userEmail") @NonNull String userEmail) throws EmailException {
+        //1-非空校验
+        //根据用户输入的用户名，查询数据库中该用户信息
+        User user = userService.selectByUserName(username);
+        if(user == null || user.getDeleteState() == 1) {
+            log.warn(ResultCode.FAILED_PARAMS_VALIDATE.toString() + "inputUsername:" + username);
+            return AppResult.failed(ResultCode.FAILED_PARAMS_VALIDATE);
+        }
+        //2-校验邮箱是否存在
+        if(StringUtil.isEmpty(user.getEmail())) {
+            log.warn(ResultCode.FAILED_PARAMS_VALIDATE + "用户id" + user.getId() +"未设置邮箱.");
+            return AppResult.failed(ResultCode.FAILED_PARAMS_VALIDATE);
+        }
+
+        //3-判断邮箱是否对应
+        if(!user.getEmail().equals(userEmail)) {
+            log.warn(ResultCode.FAILED_EMAIL_ERROR + "邮箱错误！");
+            return AppResult.failed(ResultCode.FAILED_EMAIL_ERROR);
+        }
+
+        //4-记录当前验证码，用于验证
+        String captcha = SendEmailUtil.mail(user.getEmail());
+        System.out.println("验证码是：" + captcha);
+        if(captcha == null) {
+            return AppResult.failed(ResultCode.FAILED_CODE_ERROR);
+        }
+
+        //5-记录到session中
+        HttpSession session = request.getSession();
+        session.setAttribute("username", user.getUsername());
+        session.setAttribute("rawEmailCode", captcha);
+        return AppResult.success();
+    }
+
+    @ApiOperation("验证邮箱验证码")
+    @PostMapping("/email_code")
+    public AppResult emailCode(HttpServletRequest request,
+            @ApiParam("邮箱验证码") @RequestParam("emailCode") @NonNull String emailCode){
+        HttpSession session = request.getSession(false);
+
+        String rawEmailCode = session.getAttribute("rawEmailCode").toString();
+        // 校验失败
+        if(rawEmailCode == null || !rawEmailCode.equalsIgnoreCase(emailCode)) {
+            log.warn(ResultCode.FAILED_EMAILCODE.toString());
+            return AppResult.failed(ResultCode.FAILED_EMAILCODE);
+        }
+        return AppResult.success();
     }
 }
