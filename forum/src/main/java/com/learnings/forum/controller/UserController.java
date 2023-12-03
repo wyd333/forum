@@ -98,6 +98,7 @@ public class UserController {
             //返回结果
             return AppResult.failed(ResultCode.FAILED_LOGIN);
         }
+
         //2-如果登录成功，将User对象设置到Session作用域中
         HttpSession session = request.getSession(true);
         session.setAttribute(AppConfig.USER_SESSION, user);

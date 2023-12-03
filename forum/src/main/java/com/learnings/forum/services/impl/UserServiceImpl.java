@@ -8,6 +8,7 @@ import com.learnings.forum.model.User;
 import com.learnings.forum.services.IUserService;
 import com.learnings.forum.utils.MD5Util;
 import com.learnings.forum.utils.StringUtil;
+import com.learnings.forum.utils.UUIDUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -182,6 +183,59 @@ public class UserServiceImpl implements IUserService {
             updateUser.setArticleCount(0);
         }
         //4-更新数据库
+        int row = userMapper.updateByPrimaryKeySelective(updateUser);
+        if(row != 1) {
+            log.warn(ResultCode.FAILED.toString() + ", 受影响的行数 != 1");
+            throw new ApplicationException(AppResult.failed(ResultCode.FAILED));
+        }
+    }
+
+    @Override
+    public void modifyPassword(Long id, String newPassword, String oldPassword) {
+        //1-非空校验
+        if(id == null || id <= 0
+                || StringUtil.isEmpty(newPassword)
+                || StringUtil.isEmpty(oldPassword)) {
+            //打印日志
+            log.warn(ResultCode.FAILED_PARAMS_VALIDATE.toString());
+            //抛出异常
+            throw new ApplicationException(AppResult.failed(ResultCode.FAILED_PARAMS_VALIDATE));
+        }
+
+        //2-查询用户信息
+        User user = userMapper.selectByPrimaryKey(id);
+        if(user == null || user.getDeleteState() == 1) {
+            //打印日志
+            log.warn(ResultCode.FAILED_USER_NOT_EXISTS.toString());
+            //抛出异常
+            throw new ApplicationException(AppResult.failed(ResultCode.FAILED_USER_NOT_EXISTS));
+        }
+
+        //3-校验旧密码是否正确
+        //对旧密码加密，获取密文
+        String oldEncryptPassword = MD5Util.md5Salt(oldPassword, user.getSalt());
+        //和数据库中存的当前密码进行比较
+        if(!oldEncryptPassword.equalsIgnoreCase(user.getPassword())) {
+            //打印日志
+            log.warn(ResultCode.FAILED_PARAMS_VALIDATE.toString());
+            //抛出异常
+            throw new ApplicationException(AppResult.failed(ResultCode.FAILED_PARAMS_VALIDATE));
+
+        }
+
+        //4-生成新的盐值
+        String salt = UUIDUtil.UUID_32();
+        //5-生成新密码的密文
+        String encryptPassword = MD5Util.md5Salt(newPassword, salt);
+
+        //6-构造要更新的对象
+        User updateUser = new User();
+        updateUser.setId(user.getId());
+        updateUser.setSalt(salt);
+        updateUser.setPassword(encryptPassword);
+        updateUser.setUpdateTime(new Date());
+
+        //7-调用dao
         int row = userMapper.updateByPrimaryKeySelective(updateUser);
         if(row != 1) {
             log.warn(ResultCode.FAILED.toString() + ", 受影响的行数 != 1");

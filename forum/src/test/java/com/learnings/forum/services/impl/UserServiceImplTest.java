@@ -95,4 +95,12 @@ class UserServiceImplTest {
 //        user.setRemark("测试测试测试aaa");
         userService.modifyInfo(user);
     }
+
+    @Test
+    @Transactional
+    void modifyPassword() {
+        userService.modifyPassword(8L,"111111","123456");
+        System.out.println("ok!");
+
+    }
 }
