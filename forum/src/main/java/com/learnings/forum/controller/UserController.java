@@ -244,4 +244,27 @@ public class UserController {
         }
         return AppResult.success();
     }
+
+    @ApiOperation("修改密码")
+    @PostMapping("/modifyPwd")
+    public AppResult modifyPassword(HttpServletRequest request,
+                                    @ApiParam("旧密码") @RequestParam("oldPassword") @NonNull String oldPassword,
+                                    @ApiParam("新密码") @RequestParam("newPassword") @NonNull String newPassword,
+                                    @ApiParam("确认密码") @RequestParam("passwordRepeat") @NonNull String passwordRepeat){
+        //1-校验新密码与确认密码是否相同
+        if(!newPassword.equals(passwordRepeat)) {
+            return AppResult.failed(ResultCode.FAILED_TWO_PWD_NOT_SAME);
+        }
+        //2-获取当前登录用户的信息
+        HttpSession session = request.getSession(false);
+        User user = (User) session.getAttribute(AppConfig.USER_SESSION);
+        //调用service
+        userService.modifyPassword(user.getId(),newPassword,oldPassword);
+        if(session != null) {
+            session.invalidate();   //让session失效
+        }
+
+        //4-返回结果
+        return AppResult.success();
+    }
 }

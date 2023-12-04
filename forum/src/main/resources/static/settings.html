@@ -117,7 +117,7 @@
 
                     <div class="mb-2">
                       <label class="form-label required">
-                        新原密码
+                        新密码
                       </label>
                       <div class="input-group input-group-flat">
                         <input id="settings_input_newPassword" type="password" class="form-control" placeholder="请输入密码" autocomplete="off">
@@ -281,6 +281,19 @@
               //导航栏昵称
               $('#index_nav_nickname').html(user.nickname);
           }
+          //如果密码修改成功，则强制重新登录
+          if(type == 2) {
+            $.toast({
+              heading: 'Success',
+              text: '修改密码成功！请重新登录...',
+              icon: 'success'
+            })
+            //延迟3秒后跳转到index.html
+            setTimeout(function () {
+              location.assign('/index.html');
+            }, 3000);
+            return;
+          }
           $.toast({
             heading: 'Success',
             text: respData.message,
@@ -408,7 +421,7 @@
     if (newPasswordEl.val() != passwordRepeatEl.val()) {
       $.toast({
         heading: '提示',
-        text: '两次输入的密码不相同',
+        text: '新密码与确认密码不相同！',
         icon: 'warning'
       });
       // 获取焦点
@@ -417,7 +430,7 @@
     }
 
     // 构造数据
-    let  passwrodObj = {
+    let passwordObj = {
       id : $('#settings_user_id').val(),
       oldPassword : oldPasswordEl.val(),
       newPassword : newPasswordEl.val(),
@@ -425,7 +438,7 @@
 
     }
     // 发送请求
-    changeUserInfo(passwrodObj, 2);
+    changeUserInfo(passwordObj, 2);
     // 清空输入框
     oldPasswordEl.val('');
     newPasswordEl.val('');
