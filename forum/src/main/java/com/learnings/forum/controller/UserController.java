@@ -267,4 +267,31 @@ public class UserController {
         //4-返回结果
         return AppResult.success();
     }
+
+    @ApiOperation("重置密码")
+    @PostMapping("/resetPwd")
+    public AppResult resetPwd(HttpServletRequest request,
+                                    @ApiParam("新密码") @RequestParam("newPassword") @NonNull String newPassword,
+                                    @ApiParam("确认密码") @RequestParam("passwordRepeat") @NonNull String passwordRepeat){
+        //1-校验新密码与确认密码是否相同
+        if(!newPassword.equals(passwordRepeat)) {
+            return AppResult.failed(ResultCode.FAILED_TWO_PWD_NOT_SAME);
+        }
+
+        //2-从Session中获取正在进行修改密码操作的username
+        HttpSession session = request.getSession(false);
+        String username = (String) session.getAttribute("username");
+
+        //3-调用service根据username查找用户
+        User user = userService.selectByUserName(username);
+        if(user == null || user.getDeleteState() == 1) {
+            return AppResult.failed(ResultCode.FAILED_PARAMS_VALIDATE);
+        }
+
+        //4-根据用户id和新密码 调用service
+        userService.resetPwd(user.getId(), newPassword);
+
+        //4-返回结果
+        return AppResult.success();
+    }
 }

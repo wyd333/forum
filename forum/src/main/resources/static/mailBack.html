@@ -28,7 +28,7 @@
 <div class="page page-center">
     <div class="container container-tight py-4">
         <div class="text-center mb-4">
-            <img src="./image/foxforum-logo01.png" height="0" alt="">
+            <img src="./image/foxforum-logo01.png" height="50" alt="">
         </div>
         <form id="signUpForm" class="card card-md" autocomplete="off" novalidate>
             <div class="card-body">
@@ -95,7 +95,10 @@
                             icon: 'success'
                         });
                         //跳转到修改密码页面
-                        // location.href = '/chang_password.html';
+                        //延迟3秒后跳转到 reset_pwd.html
+                        setTimeout(function () {
+                            location.assign('/reset_pwd.html');
+                        }, 3000);
                     }else {
                         $.toast({
                             heading: 'Warning',

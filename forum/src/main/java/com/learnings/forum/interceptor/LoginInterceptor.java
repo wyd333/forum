@@ -25,7 +25,8 @@ public class LoginInterceptor implements HandlerInterceptor {
     @Value("${fox-forum.login.url}")
     private String defaultURL;
     // 添加允许访问的页面
-    private List<String> allowedURLs = Arrays.asList("/return.html", "/mailBack.html");
+    private final List<String> allowedURLs = Arrays.asList("/sign-in.html","/sign-up.html",
+            "/return.html", "/mailBack.html","/reset_pwd.html");
     /**
      * 前置处理：对请求的预处理
      * @return true ：继续流程 <br/> false : 流程中断

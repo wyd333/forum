@@ -28,7 +28,7 @@ server:
   port: 1224
 #  servlet:
 #    session:
-#      timeout: 1800
+#      timeout: 10
 
 # mybatis 相关配置，单独配置，顶格写
 mybatis:
@@ -46,7 +46,7 @@ logging:
     dateformat: MM-dd HH:mm:ss  # 日期的显示格式
 
 
-# 项⽬⾃定义相关配置
+# 项目自定义相关配置
 fox-forum:
   login:
     url: sign-in.html # 未登录状况下强制跳转页面

@@ -63,4 +63,11 @@ public interface IUserService {
      * @param oldPassword 旧密码
      */
     void modifyPassword(Long id, String newPassword, String oldPassword);
+
+    /**
+     * 重置密码
+     * @param id 用户id
+     * @param newPassword 新密码
+     */
+    void resetPwd(Long id, String newPassword);
 }
