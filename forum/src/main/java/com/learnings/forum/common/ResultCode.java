@@ -28,6 +28,7 @@ public enum ResultCode {
     FAILED_CODE_ERROR      (1108,"验证码异常"),
     FAILED_EMAIL_ERROR      (1109,"邮箱错误"),
     FAILED_EMAILCODE      (1109,"验证码校验失败"),
+    FAILED_EMAILCODE_EXPIRED      (1110,"验证码已过期"),
 
 
     //      板块相关

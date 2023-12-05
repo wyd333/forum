@@ -235,11 +235,12 @@ public class UserController {
     public AppResult emailCode(HttpServletRequest request,
             @ApiParam("邮箱验证码") @RequestParam("emailCode") @NonNull String emailCode){
         HttpSession session = request.getSession(false);
-
+        if(session == null) {
+            return AppResult.failed(ResultCode.FAILED_EMAILCODE_EXPIRED);
+        }
         String rawEmailCode = session.getAttribute("rawEmailCode").toString();
         // 校验失败
         if(rawEmailCode == null || !rawEmailCode.equalsIgnoreCase(emailCode)) {
-            log.warn(ResultCode.FAILED_EMAILCODE.toString());
             return AppResult.failed(ResultCode.FAILED_EMAILCODE);
         }
         return AppResult.success();
