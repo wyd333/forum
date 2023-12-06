@@ -4,6 +4,7 @@ import com.learnings.forum.common.AppResult;
 import com.learnings.forum.common.ResultCode;
 import com.learnings.forum.config.AppConfig;
 import com.learnings.forum.model.User;
+import com.learnings.forum.services.ISessionService;
 import com.learnings.forum.services.IUserService;
 import com.learnings.forum.utils.MD5Util;
 import com.learnings.forum.utils.SendEmailUtil;
@@ -38,6 +39,9 @@ public class UserController {
 
     @Resource
     private IUserService userService;
+    @Resource
+    private ISessionService sessionService;
+    private boolean resetPwdFlag;
 
     /**
      * 用户注册
@@ -225,8 +229,14 @@ public class UserController {
 
         //5-记录到session中
         HttpSession session = request.getSession();
-        session.setAttribute("username", user.getUsername());
-        session.setAttribute("rawEmailCode", captcha);
+        String sessionId = session.getId();
+        System.out.println(sessionId);
+        session.setAttribute(AppConfig.RAW_USERNAME, user.getUsername());
+        session.setAttribute(AppConfig.RAW_EMAILCODE, captcha);
+        //6-给用户名和密码设置过期时间
+        sessionService.setRawUsernameExpiration(sessionId, user.getUsername());
+        sessionService.setRawEmailCodeExpiration(sessionId, captcha);
+        resetPwdFlag = true;
         return AppResult.success();
     }
 
@@ -238,9 +248,14 @@ public class UserController {
         if(session == null) {
             return AppResult.failed(ResultCode.FAILED_EMAILCODE_EXPIRED);
         }
-        String rawEmailCode = session.getAttribute("rawEmailCode").toString();
+
+        String rawEmailCode = sessionService.getRawEmailCode(session.getId());
+        System.out.println("从session中获取的验证码是：" + rawEmailCode);
         // 校验失败
-        if(rawEmailCode == null || !rawEmailCode.equalsIgnoreCase(emailCode)) {
+        if(rawEmailCode == null) {
+            return AppResult.failed(ResultCode.FAILED_EMAILCODE_EXPIRED);
+        }
+        if(!rawEmailCode.equalsIgnoreCase(emailCode)) {
             return AppResult.failed(ResultCode.FAILED_EMAILCODE);
         }
         return AppResult.success();
@@ -274,6 +289,9 @@ public class UserController {
     public AppResult resetPwd(HttpServletRequest request,
                                     @ApiParam("新密码") @RequestParam("newPassword") @NonNull String newPassword,
                                     @ApiParam("确认密码") @RequestParam("passwordRepeat") @NonNull String passwordRepeat){
+        if(!resetPwdFlag) {
+            return AppResult.failed(ResultCode.FAILED);
+        }
         //1-校验新密码与确认密码是否相同
         if(!newPassword.equals(passwordRepeat)) {
             return AppResult.failed(ResultCode.FAILED_TWO_PWD_NOT_SAME);
@@ -281,10 +299,13 @@ public class UserController {
 
         //2-从Session中获取正在进行修改密码操作的username
         HttpSession session = request.getSession(false);
-        String username = (String) session.getAttribute("username");
+        String rawUsername = sessionService.getRawUsername(session.getId());
+        if(rawUsername == null) {
+            return AppResult.failed(ResultCode.FAILED_PARAMS_VALIDATE);
+        }
 
         //3-调用service根据username查找用户
-        User user = userService.selectByUserName(username);
+        User user = userService.selectByUserName(rawUsername);
         if(user == null || user.getDeleteState() == 1) {
             return AppResult.failed(ResultCode.FAILED_PARAMS_VALIDATE);
         }

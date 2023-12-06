@@ -12,4 +12,17 @@ public class AppConfig {
      * 用户session中的k值
      */
     public static final String USER_SESSION = "USER_SESSION";
+    /**
+     * 找回密码时临时存放用户名
+     */
+    public static final String RAW_USERNAME = "RAW_USERNAME";
+    /**
+     * 找回密码时临时存放验证码
+     */
+    public static final String RAW_EMAILCODE = "RAW_EMAILCODE";
+
+    /**
+     * 过期时间
+     */
+    public static final Integer EXPIRE_SECONDS = 5;
 }
