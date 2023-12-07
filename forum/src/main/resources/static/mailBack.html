@@ -21,6 +21,19 @@
             font-feature-settings: "cv03", "cv04", "cv11";
         }
       </style> -->
+    <style>
+        /* 默认链接颜色 */
+        #sendButton {
+            color: cornflowerblue; /* 默认颜色 */
+        }
+
+        /* 禁用链接时的样式 */
+        #sendButton.disabled {
+            color: grey; /* 禁用时的颜色 */
+            pointer-events: none; /* 禁用点击事件 */
+        }
+    </style>
+
 </head>
 
 <body class="d-flex flex-column">
@@ -39,6 +52,9 @@
                     <input type="text" class="form-control " placeholder="请输入验证码" name="EmailCode" id="EmailCode">
                     <div class="invalid-feedback">验证码不能为空</div>
                 </div>
+                <div id="parentDiv">
+                    <a href="#" id="sendButton">发送验证码</a>
+                </div>
 
                 <div class="form-footer">
                     <button type="button" class="btn btn-primary w-100" id="submit">校验验证码</button>
@@ -56,6 +72,84 @@
 <script src="./dist/js/jquery-3.6.3.min.js"></script>
 <script src="./dist/js/jquery.toast.js"></script>
 <script>
+    let seconds = 10; // 设置初始秒数
+
+    // 页面加载时调用
+    $(document).ready(function() {
+        disableButton(); // 禁用按钮
+        countdown(); // 开始倒计时
+    });
+
+    function disableButton() {
+        $('#sendButton').addClass('disabled'); // 添加禁用样式
+        $('#sendButton').text(seconds + '秒后重新发送'); // 更新按钮文字
+    }
+
+    function enableButton() {
+        $('#sendButton').removeClass('disabled'); // 移除禁用样式
+        $('#sendButton').text('点击发送验证码'); // 恢复按钮文字
+    }
+
+    function countdown() {
+        disableButton(); // 初始化禁用按钮和倒计时显示
+        seconds--;
+
+        if (seconds >= 0) {
+            setTimeout(countdown, 1000); // 每秒更新倒计时
+        } else {
+            enableButton(); // 倒计时结束后恢复按钮
+            seconds = 10; // 重置秒数
+        }
+    }
+
+    $('#sendButton').click(function(event) {
+        event.preventDefault(); // 阻止默认行为
+        // 从 SessionStorage 中获取存储的字符串并解析为对象
+        let storedData = sessionStorage.getItem('postData');
+        if (storedData) {
+            let postData = JSON.parse(storedData);
+            // 现在 postData 中就存储了页面 A 传递过来的对象数据
+            // 接下来你可以在页面 B 中使用 postData 这个对象
+            $.ajax({
+                url: '/user/mail',
+                type: 'post',
+                contentType: 'application/x-www-form-urlencoded',
+                data: postData,
+                success: function(respData) {
+                    if (respData.code == 0) {
+                        $.toast({
+                            heading: 'Success',
+                            text: "验证码发送成功！",
+                            icon: 'success'
+                        });
+                        countdown(); // 开始倒计时
+                    } else {
+                        $.toast({
+                            heading: 'Warning',
+                            text: respData.message,
+                            icon: 'warning'
+                        });
+                    }
+                },
+                error: function() {
+                    $.toast({
+                        heading: 'Error',
+                        text: '出现问题，请与管理员联系',
+                        icon: 'error'
+                    });
+                }
+            });
+        } else {
+            // 如果存储的数据不存在，做相应的处理
+            $.toast({
+                heading: 'Error',
+                text: '出现问题，请重试！',
+                icon: 'error'
+            });
+            location.assign("sign-in.html");
+        }
+
+    });
 
     $(function () {
         // 获取表单并校验

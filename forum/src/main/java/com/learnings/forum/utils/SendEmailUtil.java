@@ -36,7 +36,7 @@ public class SendEmailUtil {
         String Captcha = codeUtil.createCode();
         // 8-设置发送内容
         email.setMsg("[FoxForum-技术论坛] 您正在找回密码，验证码为："+String.valueOf(Captcha)+"\n" +
-                "只有一次输入机会，请正确输入！如非本人操作，请忽略。");
+                "验证码有效期为5分钟，请及时填写！如非本人操作，请忽略。");
         // 9-进行发送
 //        email.send();
 

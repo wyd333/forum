@@ -118,6 +118,8 @@
 
                         //延迟3秒后跳转到 mailBack.html
                         setTimeout(function () {
+                            // 将数据存储在 SessionStorage 中
+                            sessionStorage.setItem('postData', JSON.stringify(postData));
                             location.assign('/mailBack.html');
                         }, 3000);
                     }else {

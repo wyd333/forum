@@ -24,5 +24,5 @@ public class AppConfig {
     /**
      * 过期时间
      */
-    public static final Integer EXPIRE_SECONDS = 5;
+    public static final Integer EXPIRE_SECONDS = 100;
 }
