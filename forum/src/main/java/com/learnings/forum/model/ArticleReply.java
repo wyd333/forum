@@ -2,10 +2,11 @@ package com.learnings.forum.model;
 
 import lombok.Data;
 
+import java.io.Serializable;
 import java.util.Date;
 
 @Data
-public class ArticleReply {
+public class ArticleReply implements Serializable {
     private Long id;
 
     //帖子Id，关联article表

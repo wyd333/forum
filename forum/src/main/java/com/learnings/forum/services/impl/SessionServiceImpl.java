@@ -19,7 +19,7 @@ import java.util.concurrent.TimeUnit;
 
 @Service
 @Slf4j
-public class SessionService implements ISessionService {
+public class SessionServiceImpl implements ISessionService {
 
     @Resource
     private StringRedisTemplate stringRedisTemplate;

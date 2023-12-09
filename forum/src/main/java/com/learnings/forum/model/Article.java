@@ -3,10 +3,11 @@ package com.learnings.forum.model;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import java.io.Serializable;
 import java.util.Date;
 
 @Data
-public class Article {
+public class Article implements Serializable {
     private Long id;
 
     private Long boardId;

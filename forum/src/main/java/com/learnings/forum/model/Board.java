@@ -2,10 +2,11 @@ package com.learnings.forum.model;
 
 import lombok.Data;
 
+import java.io.Serializable;
 import java.util.Date;
 
 @Data
-public class Board {
+public class Board implements Serializable {
     private Long id;
 
     private String name;
