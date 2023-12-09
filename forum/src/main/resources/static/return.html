@@ -68,6 +68,8 @@
 <script src="./dist/js/jquery-3.6.3.min.js"></script>
 <script src="./dist/js/jquery.toast.js"></script>
 <script>
+    // 在用户访问了 return.html 页面时设置标记
+    localStorage.setItem('visitedReturnPage', 'true');
 
     $(function () {
         // 获取表单并校验
@@ -115,6 +117,9 @@
                             text: "发送成功！正在跳转校验...",
                             icon: 'success'
                         });
+
+                        //标记信息已填写
+                        localStorage.setItem('CompleteFlag', 'true');
 
                         //延迟3秒后跳转到 mailBack.html
                         setTimeout(function () {

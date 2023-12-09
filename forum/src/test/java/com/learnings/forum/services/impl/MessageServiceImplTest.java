@@ -1,5 +1,7 @@
 package com.learnings.forum.services.impl;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.learnings.forum.model.Message;
 import com.learnings.forum.services.IMessageService;
 import org.junit.jupiter.api.Test;
@@ -7,6 +9,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -21,6 +25,8 @@ import static org.junit.jupiter.api.Assertions.*;
 class MessageServiceImplTest {
     @Resource
     private IMessageService messageService;
+    @Resource
+    private ObjectMapper objectMapper;
 
     @Test
     @Transactional
@@ -37,5 +43,11 @@ class MessageServiceImplTest {
     void selectUnreadCount() {
         Integer count = messageService.selectUnreadCount(700L);
         System.out.println("未读数量：" + count);
+    }
+
+    @Test
+    void selectByReceiveUserId() throws JsonProcessingException {
+        List<Message> messages = messageService.selectByReceiveUserId(800L);
+        System.out.println(objectMapper.writeValueAsString(messages));
     }
 }

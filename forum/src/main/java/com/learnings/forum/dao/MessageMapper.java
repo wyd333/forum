@@ -4,6 +4,8 @@ import com.learnings.forum.model.Message;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.List;
+
 @Mapper
 public interface MessageMapper {
     int insert(Message row);
@@ -22,4 +24,11 @@ public interface MessageMapper {
      * @return 未读数量
      */
     Integer selectUnreadCount(@Param("receiveUserId") Long receiveUserId);
+
+    /**
+     *  根据接收者id查询私信列表
+     * @param receiveUserId 接收者用户id
+     * @return 消息列表
+     */
+    List<Message> selectByReceiveUserId(@Param("receiveUserId")Long receiveUserId);
 }

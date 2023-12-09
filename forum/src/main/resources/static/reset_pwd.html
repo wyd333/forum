@@ -92,114 +92,120 @@
 <script src="./dist/js/jquery-3.6.3.min.js"></script>
 <script src="./dist/js/jquery.toast.js"></script>
 <script>
-
-    $(function () {
-        // 获取表单并校验
-        $('#submit').click(function () {
-            let checkForm = true;
-            // 校验密码非空
-            if (!$('#password').val()) {
-                $('#password').addClass('is-invalid');
-                checkForm = false;
-            }
-            // 校验确认密码非空, 校验密码与重复密码是否相同
-            if (!$('#passwordRepeat').val() || $('#password').val() != $('#passwordRepeat').val()) {
-                $('#passwordRepeat').addClass('is-invalid');
-                checkForm = false;
-            }
-
-            // 根据判断结果提交表单
-            if (!checkForm) {
-                return false;
-            }
-
-            // 构造数据
-            let postData = {
-                newPassword : $('#password').val(),
-                passwordRepeat : $('#passwordRepeat').val()
-            };
-
-            // 发送AJAX请求
-            // contentType = application/x-www-form-urlencoded
-            // 成功后跳转到 sign-in.html
-            $.ajax ({
-                url : '/user/resetPwd',
-                type : 'post',
-                contentType : 'application/x-www-form-urlencoded',
-                data : postData,
-
-                success : function (respData) {
-                    if (respData.code == 0){
-                        //验证成功
-                        $.toast({
-                            heading: 'Success',
-                            text: "重置密码成功！",
-                            icon: 'success'
-                        });
-                        //跳转到修改密码页面
-                        //延迟3秒后跳转到 index.html
-                        setTimeout(function () {
-                            location.assign('/index.html');
-                        }, 3000);
-                    }else {
-                        $.toast({
-                            heading: 'Warning',
-                            text: respData.message,
-                            icon: 'warning'
-                        });
-                    }
-                },
-
-                error: function () {
-                    $.toast({
-                        heading: 'Error',
-                        text: '出现问题，请与管理员联系',
-                        icon: 'error'
-                    })
+    // 检查用户是否已经访问了 return.html、mailBack.html
+    if (!localStorage.getItem('visitedReturnPage') || !localStorage.getItem('visitedMailBackPage')
+        || !localStorage.getItem('CompleteFlag')) {
+        // 重定向到 return.html
+        window.location.href = 'return.html';
+    } else {
+        $(function () {
+            // 获取表单并校验
+            $('#submit').click(function () {
+                let checkForm = true;
+                // 校验密码非空
+                if (!$('#password').val()) {
+                    $('#password').addClass('is-invalid');
+                    checkForm = false;
+                }
+                // 校验确认密码非空, 校验密码与重复密码是否相同
+                if (!$('#passwordRepeat').val() || $('#password').val() != $('#passwordRepeat').val()) {
+                    $('#passwordRepeat').addClass('is-invalid');
+                    checkForm = false;
                 }
 
+                // 根据判断结果提交表单
+                if (!checkForm) {
+                    return false;
+                }
+
+                // 构造数据
+                let postData = {
+                    newPassword: $('#password').val(),
+                    passwordRepeat: $('#passwordRepeat').val()
+                };
+
+                // 发送AJAX请求
+                // contentType = application/x-www-form-urlencoded
+                // 成功后跳转到 sign-in.html
+                $.ajax({
+                    url: '/user/resetPwd',
+                    type: 'post',
+                    contentType: 'application/x-www-form-urlencoded',
+                    data: postData,
+
+                    success: function (respData) {
+                        if (respData.code == 0) {
+                            //验证成功
+                            $.toast({
+                                heading: 'Success',
+                                text: "重置密码成功！",
+                                icon: 'success'
+                            });
+                            //跳转到修改密码页面
+                            //延迟3秒后跳转到 index.html
+                            setTimeout(function () {
+                                location.assign('/index.html');
+                            }, 3000);
+                        } else {
+                            $.toast({
+                                heading: 'Warning',
+                                text: respData.message,
+                                icon: 'warning'
+                            });
+                        }
+                    },
+
+                    error: function () {
+                        $.toast({
+                            heading: 'Error',
+                            text: '出现问题，请与管理员联系',
+                            icon: 'error'
+                        })
+                    }
+
+                });
+            });
+
+            // 表单元单独检验
+            $('#password ,#email').on('blur', function () {
+                if ($(this).val()) {
+                    $(this).removeClass('is-invalid');
+                    $(this).addClass('is-valid');
+                } else {
+                    $(this).removeClass('is-valid');
+                    $(this).addClass('is-invalid');
+                }
+            })
+
+            // 检验确认密码
+            $('#passwordRepeat').on('blur', function () {
+                if ($(this).val() && $(this).val() == $('#password').val()) {
+                    $(this).removeClass('is-invalid');
+                    $(this).addClass('is-valid');
+                } else {
+                    $(this).removeClass('is-valid');
+                    $(this).addClass('is-invalid');
+                }
+            })
+
+
+            // 密码框右侧明文密文切换按钮
+            $('#passwordRepeat_a').click(function () {
+                if ($('#passwordRepeat').attr('type') == 'password') {
+                    $('#passwordRepeat').attr('type', 'text');
+                } else {
+                    $('#passwordRepeat').attr('type', 'password');
+                }
+            });
+            $('#password_a').click(function () {
+                if ($('#password').attr('type') == 'password') {
+                    $('#password').attr('type', 'text');
+                } else {
+                    $('#password').attr('type', 'password');
+                }
             });
         });
-
-        // 表单元单独检验
-        $('#password ,#email').on('blur', function () {
-            if ($(this).val()) {
-                $(this).removeClass('is-invalid');
-                $(this).addClass('is-valid');
-            } else {
-                $(this).removeClass('is-valid');
-                $(this).addClass('is-invalid');
-            }
-        })
-
-        // 检验确认密码
-        $('#passwordRepeat').on('blur', function () {
-            if ($(this).val() && $(this).val() == $('#password').val()) {
-                $(this).removeClass('is-invalid');
-                $(this).addClass('is-valid');
-            } else {
-                $(this).removeClass('is-valid');
-                $(this).addClass('is-invalid');
-            }
-        })
-
-
-        // 密码框右侧明文密文切换按钮
-        $('#passwordRepeat_a').click(function () {
-            if($('#passwordRepeat').attr('type') == 'password') {
-                $('#passwordRepeat').attr('type', 'text');
-            } else {
-                $('#passwordRepeat').attr('type', 'password');
-            }
-        });
-        $('#password_a').click(function () {
-            if($('#password').attr('type') == 'password') {
-                $('#password').attr('type', 'text');
-            } else {
-                $('#password').attr('type', 'password');
-            }
-        });
-    });
+    }
 
 
 </script>

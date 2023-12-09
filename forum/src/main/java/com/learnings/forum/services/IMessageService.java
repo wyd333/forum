@@ -2,6 +2,8 @@ package com.learnings.forum.services;
 
 import com.learnings.forum.model.Message;
 
+import java.util.List;
+
 /**
  * Created with IntelliJ IDEA.
  * Description:
@@ -22,4 +24,11 @@ public interface IMessageService {
      * @return 未读数量
      */
     Integer selectUnreadCount(Long receiveUserId);
+
+    /**
+     *  根据接收者id查询私信列表
+     * @param receiveUserId 接收者用户id
+     * @return 消息列表
+     */
+    List<Message> selectByReceiveUserId(Long receiveUserId);
 }

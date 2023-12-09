@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.util.List;
 
 /**
  * Created with IntelliJ IDEA.
@@ -83,5 +84,18 @@ public class MessageController {
         Integer count = messageService.selectUnreadCount(user.getId());
         //3-返回
         return AppResult.success(count);
+    }
+
+    @ApiOperation("查询用户收到的私信列表")
+    @GetMapping("/get_all")
+    public AppResult<List<Message>> getAll(HttpServletRequest request) {
+        //1-获取当前登录的账户
+        HttpSession session = request.getSession(false);
+        User user = (User) session.getAttribute(AppConfig.USER_SESSION);
+        //2-调用service
+        List<Message> messages = messageService.selectByReceiveUserId(user.getId());
+
+        //3-返回
+        return AppResult.success(messages);
     }
 }

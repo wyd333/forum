@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.Date;
+import java.util.List;
 
 /**
  * Created with IntelliJ IDEA.
@@ -85,5 +86,20 @@ public class MessageServiceImpl implements IMessageService {
             throw new ApplicationException(AppResult.failed(ResultCode.ERROR_SERVICES));
         }
         return count;
+    }
+
+    @Override
+    public List<Message> selectByReceiveUserId(Long receiveUserId) {
+        //1-非空校验
+        if(receiveUserId == null || receiveUserId <= 0) {
+            //打印日志
+            log.warn(ResultCode.FAILED_PARAMS_VALIDATE.toString());
+            //抛出异常
+            throw new ApplicationException(AppResult.failed(ResultCode.FAILED_PARAMS_VALIDATE));
+        }
+        //2-调用dao查询
+        List<Message> messages = messageMapper.selectByReceiveUserId(receiveUserId);
+
+        return messages;
     }
 }

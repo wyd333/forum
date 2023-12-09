@@ -72,158 +72,166 @@
 <script src="./dist/js/jquery-3.6.3.min.js"></script>
 <script src="./dist/js/jquery.toast.js"></script>
 <script>
-    let seconds = 10; // 设置初始秒数
+    // 检查用户是否已经访问了 return.html 且填写了信息
+    if (!localStorage.getItem('visitedReturnPage') || !localStorage.getItem('CompleteFlag')) {
+        // 重定向到 return.html
+        window.location.href = 'return.html';
+    } else {
+        // 在用户访问了 mailBack.html 页面时设置标记
+        localStorage.setItem('visitedMailBackPage', 'true');
+        let seconds = 10; // 设置初始秒数
 
-    // 页面加载时调用
-    $(document).ready(function() {
-        disableButton(); // 禁用按钮
-        countdown(); // 开始倒计时
-    });
-
-    function disableButton() {
-        $('#sendButton').addClass('disabled'); // 添加禁用样式
-        $('#sendButton').text(seconds + '秒后重新发送'); // 更新按钮文字
-    }
-
-    function enableButton() {
-        $('#sendButton').removeClass('disabled'); // 移除禁用样式
-        $('#sendButton').text('点击发送验证码'); // 恢复按钮文字
-    }
-
-    function countdown() {
-        disableButton(); // 初始化禁用按钮和倒计时显示
-        seconds--;
-
-        if (seconds >= 0) {
-            setTimeout(countdown, 1000); // 每秒更新倒计时
-        } else {
-            enableButton(); // 倒计时结束后恢复按钮
-            seconds = 10; // 重置秒数
-        }
-    }
-
-    $('#sendButton').click(function(event) {
-        event.preventDefault(); // 阻止默认行为
-        // 从 SessionStorage 中获取存储的字符串并解析为对象
-        let storedData = sessionStorage.getItem('postData');
-        if (storedData) {
-            let postData = JSON.parse(storedData);
-            // 现在 postData 中就存储了页面 A 传递过来的对象数据
-            // 接下来你可以在页面 B 中使用 postData 这个对象
-            $.ajax({
-                url: '/user/mail',
-                type: 'post',
-                contentType: 'application/x-www-form-urlencoded',
-                data: postData,
-                success: function(respData) {
-                    if (respData.code == 0) {
-                        $.toast({
-                            heading: 'Success',
-                            text: "验证码发送成功！",
-                            icon: 'success'
-                        });
-                        countdown(); // 开始倒计时
-                    } else {
-                        $.toast({
-                            heading: 'Warning',
-                            text: respData.message,
-                            icon: 'warning'
-                        });
-                    }
-                },
-                error: function() {
-                    $.toast({
-                        heading: 'Error',
-                        text: '出现问题，请与管理员联系',
-                        icon: 'error'
-                    });
-                }
-            });
-        } else {
-            // 如果存储的数据不存在，做相应的处理
-            $.toast({
-                heading: 'Error',
-                text: '出现问题，请重试！',
-                icon: 'error'
-            });
-            location.assign("sign-in.html");
-        }
-
-    });
-
-    $(function () {
-        // 获取表单并校验
-        $('#submit').click(function () {
-            let checkForm = true;
-            // 校验验证码
-            if (!$('#EmailCode').val()) {
-                $('#EmailCode').addClass('is-invalid');
-                checkForm = false;
-            }
-
-            // 根据判断结果提交表单
-            if (!checkForm) {
-                return false;
-            }
-
-            // 构造数据
-            let postData = {
-                emailCode : $('#EmailCode').val()
-            };
-
-            // 发送AJAX请求
-            // contentType = application/x-www-form-urlencoded
-            // 成功后跳转到 sign-in.html
-            $.ajax ({
-                url : '/user/email_code',
-                type : 'post',
-                contentType : 'application/x-www-form-urlencoded',
-                data : postData,
-
-                success : function (respData) {
-                    if (respData.code == 0){
-                        //验证成功
-                        $.toast({
-                            heading: 'Success',
-                            text: "校验成功！正在跳转...",
-                            icon: 'success'
-                        });
-                        //跳转到修改密码页面
-                        //延迟3秒后跳转到 reset_pwd.html
-                        setTimeout(function () {
-                            location.assign('/reset_pwd.html');
-                        }, 3000);
-                    }else {
-                        $.toast({
-                            heading: 'Warning',
-                            text: respData.message,
-                            icon: 'warning'
-                        });
-                    }
-                },
-
-                error: function () {
-                    $.toast({
-                        heading: 'Error',
-                        text: '出现问题，请与管理员联系',
-                        icon: 'error'
-                    })
-                }
-
-            });
+        // 页面加载时调用
+        $(document).ready(function () {
+            disableButton(); // 禁用按钮
+            countdown(); // 开始倒计时
         });
 
-        // 表单元单独检验
-        $('#EmailCode').on('blur', function () {
-            if ($(this).val()) {
-                $(this).removeClass('is-invalid');
-                $(this).addClass('is-valid');
+        function disableButton() {
+            $('#sendButton').addClass('disabled'); // 添加禁用样式
+            $('#sendButton').text(seconds + '秒后重新发送'); // 更新按钮文字
+        }
+
+        function enableButton() {
+            $('#sendButton').removeClass('disabled'); // 移除禁用样式
+            $('#sendButton').text('点击发送验证码'); // 恢复按钮文字
+        }
+
+        function countdown() {
+            disableButton(); // 初始化禁用按钮和倒计时显示
+            seconds--;
+
+            if (seconds >= 0) {
+                setTimeout(countdown, 1000); // 每秒更新倒计时
             } else {
-                $(this).removeClass('is-valid');
-                $(this).addClass('is-invalid');
+                enableButton(); // 倒计时结束后恢复按钮
+                seconds = 10; // 重置秒数
             }
-        })
-    });
+        }
+
+        $('#sendButton').click(function (event) {
+            event.preventDefault(); // 阻止默认行为
+            // 从 SessionStorage 中获取存储的字符串并解析为对象
+            let storedData = sessionStorage.getItem('postData');
+            if (storedData) {
+                let postData = JSON.parse(storedData);
+                // 现在 postData 中就存储了页面 A 传递过来的对象数据
+                // 接下来你可以在页面 B 中使用 postData 这个对象
+                $.ajax({
+                    url: '/user/mail',
+                    type: 'post',
+                    contentType: 'application/x-www-form-urlencoded',
+                    data: postData,
+                    success: function (respData) {
+                        if (respData.code == 0) {
+                            $.toast({
+                                heading: 'Success',
+                                text: "验证码发送成功！",
+                                icon: 'success'
+                            });
+                            countdown(); // 开始倒计时
+                        } else {
+                            $.toast({
+                                heading: 'Warning',
+                                text: respData.message,
+                                icon: 'warning'
+                            });
+                        }
+                    },
+                    error: function () {
+                        $.toast({
+                            heading: 'Error',
+                            text: '出现问题，请与管理员联系',
+                            icon: 'error'
+                        });
+                    }
+                });
+            } else {
+                // 如果存储的数据不存在，做相应的处理
+                $.toast({
+                    heading: 'Error',
+                    text: '出现问题，请重试！',
+                    icon: 'error'
+                });
+                location.assign("sign-in.html");
+            }
+
+        });
+
+        $(function () {
+            // 获取表单并校验
+            $('#submit').click(function () {
+                let checkForm = true;
+                // 校验验证码
+                if (!$('#EmailCode').val()) {
+                    $('#EmailCode').addClass('is-invalid');
+                    checkForm = false;
+                }
+
+                // 根据判断结果提交表单
+                if (!checkForm) {
+                    return false;
+                }
+
+                // 构造数据
+                let postData = {
+                    emailCode: $('#EmailCode').val()
+                };
+
+                // 发送AJAX请求
+                // contentType = application/x-www-form-urlencoded
+                // 成功后跳转到 sign-in.html
+                $.ajax({
+                    url: '/user/email_code',
+                    type: 'post',
+                    contentType: 'application/x-www-form-urlencoded',
+                    data: postData,
+
+                    success: function (respData) {
+                        if (respData.code == 0) {
+                            //验证成功
+                            $.toast({
+                                heading: 'Success',
+                                text: "校验成功！正在跳转...",
+                                icon: 'success'
+                            });
+                            //跳转到修改密码页面
+                            //延迟3秒后跳转到 reset_pwd.html
+                            setTimeout(function () {
+                                location.assign('/reset_pwd.html');
+                            }, 3000);
+                        } else {
+                            $.toast({
+                                heading: 'Warning',
+                                text: respData.message,
+                                icon: 'warning'
+                            });
+                        }
+                    },
+
+                    error: function () {
+                        $.toast({
+                            heading: 'Error',
+                            text: '出现问题，请与管理员联系',
+                            icon: 'error'
+                        })
+                    }
+
+                });
+            });
+
+            // 表单元单独检验
+            $('#EmailCode').on('blur', function () {
+                if ($(this).val()) {
+                    $(this).removeClass('is-invalid');
+                    $(this).addClass('is-valid');
+                } else {
+                    $(this).removeClass('is-valid');
+                    $(this).addClass('is-invalid');
+                }
+            })
+        });
+    }
 
 
 </script>
