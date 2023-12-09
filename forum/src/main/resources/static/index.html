@@ -427,7 +427,7 @@
     buildArticleList();
 
 
-    // ============================ 处理个设置心点击事件 ===========================
+    // ============================ 处理个人设置心点击事件 ===========================
     $('#index_user_settings').click(function () {
       console.log('加载设置中心页面');
       removeNavActive();
@@ -523,7 +523,6 @@
             icon: 'error'
           });
         }
-
       });
     });
 
@@ -688,6 +687,28 @@
           $('#btn_index_message_reply').show();
           $('#btn_index_send_message_reply').hide();
 
+          //发送请求，更新站内信状态为已读
+          if(messageItem.state == 0 && statusDotEl.hasClass('status-dot-animated bg-red')) {
+            $.ajax({
+              url: 'message/mark_read',
+              type: 'post',
+              contentType: 'application/x-www-form-urlencoded',
+              data: {
+                id: messageItem.id
+              },
+              //回调
+              success: function (respData) {
+                if(respData.code == 0) {
+                  //成功，更新页面效果
+                  statusDotEl.removeClass('status-dot-animated bg-red');
+                  //修改未读为已读
+                  statusDescEl.html('[已读]');
+                  //修改本地message的state为1
+                  messageItem.state = 1;
+                }
+              }
+            });
+          }
         });
 
         // 添加到列表
@@ -695,7 +716,8 @@
 
       });
     }
-    
+
+
     // ============ 处理阅读和回复站内信 ============
     // 清空站内信输入区
     function cleanMessageReplyForm () {
@@ -738,23 +760,46 @@
         });
         // 输入框
         replyReceiveContentEl.focus();
-        retrun;
+        return;
       }
 
       // 构造请求数据
       let postData = {
         repliedId: $('#index_message_detail_id').val(),
-        receiveUserId : $('#index_message_reply_receive_user_id').val(),
         content: replyReceiveContentEl.val()
       };
 
       // 发送请求 message/reply
-      // 回复成功后刷新未读标识和站内信列表
-      // requestMessageUnreadCount();
-      // requestMessageList();
-      // // 清空输入区
-      // cleanMessageReplyForm ();
       $.ajax ({
+        url: 'message/reply',
+        type: 'post',
+        contentType: 'application/x-www-form-urlencoded',
+        data: postData,
+        // 成功回调
+        success: function (respData) {
+          //判断状态码
+          if(respData.code == 0) {
+            // 回复成功后刷新未读标识和站内信列表
+            requestMessageUnreadCount();
+            requestMessageList();
+            // 清空输入区
+            cleanMessageReplyForm ();
+          }else{
+            //提示信息
+            $.toast({
+              heading: 'Warning',
+              text: respData.message,
+              icon: 'warning'
+            });
+          }
+        },
+        error: function () {
+          $.toast({
+            heading: 'Error',
+            text: '出现问题，请与管理员联系',
+            icon: 'error'
+          });
+        }
         
       });
 

@@ -98,4 +98,71 @@ public class MessageController {
         //3-返回
         return AppResult.success(messages);
     }
+
+    @ApiOperation("更新站内信为已读状态")
+    @PostMapping("/mark_read")
+    public AppResult markRead(HttpServletRequest request,
+            @ApiParam("站内信Id") @RequestParam("id") @NonNull Long id){
+        // 1-查询当前站内信状态
+        Message message = messageService.selectById(id);
+        if(message == null || message.getDeleteState() == 1) {
+            return AppResult.failed(ResultCode.FAILED_MESSAGE_NOT_EXISTS);
+        }
+        // 2-校验站内信是不是发给自己的
+        HttpSession session = request.getSession(false);
+        User user = (User) session.getAttribute(AppConfig.USER_SESSION);
+        if(!user.getId().equals(message.getReceiveUserId())) {
+            return AppResult.failed(ResultCode.FAILED_FORBIDDEN);
+        }
+
+        //3-调用service，把状态更新成已读
+        messageService.updateStateById(id, (byte) 1);
+        //4-返回结果
+        return AppResult.success();
+    }
+
+    /**
+     * 回复站内信
+     * @param repliedId 要回复的站内信id
+     * @param content 要回复的站内信id
+     * @return AppResult
+     */
+    @ApiOperation("回复站内信")
+    @PostMapping("/reply")
+    public AppResult reply(HttpServletRequest request,
+                           @ApiParam("要回复的站内信id") @RequestParam("repliedId") @NonNull Long repliedId,
+                           @ApiParam("要回复的站内信id") @RequestParam("content") @NonNull String content){
+        // 1-校验当前用户状态
+        HttpSession session = request.getSession(false);
+        User user = (User) session.getAttribute(AppConfig.USER_SESSION);
+        if(user.getState() == 1) {
+            return AppResult.failed(ResultCode.FAILED_USER_BANNED);
+        }
+        // 2-校验要回复的站内信状态
+        Message existsMessage = messageService.selectById(repliedId);
+        if(existsMessage == null || existsMessage.getDeleteState() == 1) {
+            return AppResult.failed(ResultCode.FAILED_MESSAGE_NOT_EXISTS);
+        }
+
+        // 3-校验不能给自己回复
+        if(user.getId().equals(existsMessage.getPostUserId())) {
+            return AppResult.failed(ResultCode.FAILED_MESSAGE_TO_MYSELF);
+        }
+
+        // 4-校验当前用户是否是要回复的站内信的接收者
+        if(!user.getId().equals(existsMessage.getReceiveUserId())) {
+            return AppResult.failed(ResultCode.FAILED);
+        }
+        // 3-构造对象 Controller = 校验&&构造
+        Message message = new Message();
+        message.setPostUserId(user.getId());    //发送者
+        message.setReceiveUserId(existsMessage.getPostUserId()); //接收者
+        message.setContent(content);    //内容
+
+        // 4-调用service
+        messageService.reply(repliedId, message);
+        // 5-返回结果
+        return AppResult.success();
+
+    }
 }

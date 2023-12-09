@@ -36,10 +36,13 @@ public enum ResultCode {
     FAILED_BOARD_BANNED             (1202,"板块状态异常"),
     FAILED_BOARD_NOT_EXISTS         (1203,"板块不存在"),
 
-    //帖子相关
+    //    帖子相关
     FAILED_ARTICLE_NOT_EXISTS          (1301, "帖子不存在"),
-    FAILED_ARTICLE_BANNED          (1302, "作者已结帖~不可回复！"),
+    FAILED_ARTICLE_BANNED          (1302, "作者已结帖，不可回复！"),
 
+    //    站内信
+    FAILED_MESSAGE_NOT_EXISTS          (1401, "站内信不存在"),
+    FAILED_MESSAGE_TO_MYSELF          (1402, "不能回复自己的站内信!"),
 
     //    服务器相关
     ERROR_SERVICES                  (2000, "服务器内部错误"),
