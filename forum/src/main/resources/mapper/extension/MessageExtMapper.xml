@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--注意命名空间一定要和自动生成的mapper.xml相同！-->
+<mapper namespace="com.learnings.forum.dao.MessageMapper">
+<!--  根据用户id查询该用户的未读私信数-->
+  <select id="selectUnreadCount" parameterType="java.lang.Long" resultType="java.lang.Integer">
+    SELECT count(*)
+    FROM t_message
+    WHERE state = 0
+      and deleteState = 0
+      and receiveUserId = #{receiveUserId,jdbcType=BIGINT}
+  </select>
+
+</mapper>

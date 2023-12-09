@@ -32,4 +32,10 @@ class MessageServiceImplTest {
         messageService.create(message);
         System.out.println("ok!");
     }
+
+    @Test
+    void selectUnreadCount() {
+        Integer count = messageService.selectUnreadCount(700L);
+        System.out.println("未读数量：" + count);
+    }
 }
