@@ -70,4 +70,12 @@ public interface IUserService {
      * @param newPassword 新密码
      */
     void resetPwd(Long id, String newPassword);
+
+    /**
+     * 修改头像
+     * @param id 用户id
+     * @param relativePathUrl 头像的相对路径
+     */
+    void modifyAvatar(Long id, String relativePathUrl);
+
 }

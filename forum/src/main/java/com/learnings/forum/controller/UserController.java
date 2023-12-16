@@ -1,5 +1,6 @@
 package com.learnings.forum.controller;
 
+import cn.hutool.system.UserInfo;
 import com.learnings.forum.common.AppResult;
 import com.learnings.forum.common.ResultCode;
 import com.learnings.forum.config.AppConfig;
@@ -16,11 +17,21 @@ import io.swagger.annotations.ApiParam;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.mail.EmailException;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.UUID;
 
 /**
  * Created with IntelliJ IDEA.
@@ -42,6 +53,10 @@ public class UserController {
     @Resource
     private ISessionService sessionService;
     private boolean resetPwdFlag;
+
+    @Value("${upload.directory}")
+    private String uploadDirectory;
+
 
     /**
      * 用户注册
@@ -75,6 +90,7 @@ public class UserController {
         String encryptPassword = MD5Util.md5Salt(password, salt);
         user.setPassword(encryptPassword);
         user.setSalt(salt);
+        user.setAvatarUrl("upload/avatar01.jpeg");
 
         //3-调用service层处理数据
         userService.createNormalUser(user);
@@ -233,7 +249,7 @@ public class UserController {
         System.out.println(sessionId);
         session.setAttribute(AppConfig.RAW_USERNAME, user.getUsername());
         session.setAttribute(AppConfig.RAW_EMAILCODE, captcha);
-        //6-给用户名和密码设置过期时间
+        //6-给用户名和验证码设置过期时间
         sessionService.setRawUsernameExpiration(sessionId, user.getUsername());
         sessionService.setRawEmailCodeExpiration(sessionId, captcha);
         resetPwdFlag = true;
@@ -315,5 +331,71 @@ public class UserController {
 
         //4-返回结果
         return AppResult.success();
+    }
+
+    /**
+     * 修改用户头像
+     * @param request
+     * @param photo
+     * @return
+     */
+
+    @ApiOperation("修改用户头像")
+    @PostMapping("/sub_photo")
+    public AppResult updatePhoto(HttpServletRequest request,
+                                  @ApiParam("图片参数") @NonNull @RequestPart("myphoto") MultipartFile photo) {
+
+        // 1-要上传的文件名
+        String originalFileName = photo.getOriginalFilename();
+        if(originalFileName == null) {
+            return AppResult.failed(ResultCode.ERROR_PHOTO);
+        }
+
+        // 2-获取用户信息(1.删除旧头像需要原来的旧头像的路径 2.修改图片需要用户 id)
+        HttpSession session = request.getSession(false);
+        if(session == null) {
+            log.warn(ResultCode.FAILED_PARAMS_VALIDATE.toString());
+            return AppResult.failed(ResultCode.FAILED_PARAMS_VALIDATE);
+        }
+
+        User user = (User) session.getAttribute(AppConfig.USER_SESSION);
+        if(user == null || user.getDeleteState() == 1) {
+            return AppResult.failed(ResultCode.FAILED_USER_NOT_EXISTS);
+        }
+
+        // 3-获取文件后缀
+        String suffix = originalFileName.substring(originalFileName.lastIndexOf("."));
+        // 4-生成图片名称，使用 UUID 避免相同图片名冲突，加上图片后缀
+        String photoName = UUIDUtil.UUID_32() + suffix;
+
+        // 5-图片保存路径
+        String relativePathUrl = uploadDirectory + photoName;
+        String absolutePathUrl = AppConfig.ABSOLUTE_PATH + photoName;
+        Path filePath = Paths.get(absolutePathUrl);
+
+        // 6-不是修改默认头像的话就将旧头像删除即可
+        if(!StringUtil.isEmpty(user.getAvatarUrl()) && !user.getAvatarUrl().equals("upload/avatar01.jpeg")) {
+            String oldAvatarPath = AppConfig.ABSOLUTE_PATH + user.getAvatarUrl().split("/")[1];
+            File oldAvatar = new File(oldAvatarPath);
+            boolean b = oldAvatar.delete();
+            System.out.println(b);
+        }
+
+        try {
+            // 7-生成文件
+            //将上传文件绝对路径保存到服务器文件系统
+            Files.write(filePath, photo.getBytes());
+
+            //保存图片相对路径到数据库中
+            userService.modifyAvatar(user.getId(), relativePathUrl);
+
+            user.setAvatarUrl(relativePathUrl);
+            session.setAttribute(AppConfig.USER_SESSION, user);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        System.out.println("新头像的地址：" + user.getAvatarUrl());
+        //将图片相对路径返回给前端
+        return AppResult.success(user);
     }
 }

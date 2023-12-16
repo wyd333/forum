@@ -103,4 +103,10 @@ class UserServiceImplTest {
         System.out.println("ok!");
 
     }
+
+    @Test
+    void modifyAvatar() {
+        userService.modifyAvatar(8L, "path123");
+        System.out.println("ok!");
+    }
 }

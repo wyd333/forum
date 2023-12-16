@@ -394,4 +394,36 @@ public class UserServiceImpl implements IUserService {
             throw new ApplicationException(AppResult.failed(ResultCode.FAILED));
         }
     }
+
+    @Override
+    public void modifyAvatar(Long id, String relativePathUrl) {
+        //1-非空校验
+        if(id == null || id <= 0 || StringUtil.isEmpty(relativePathUrl)) {
+            //打印日志
+            log.warn(ResultCode.FAILED_PARAMS_VALIDATE.toString());
+            //抛出异常
+            throw new ApplicationException(AppResult.failed(ResultCode.FAILED_PARAMS_VALIDATE));
+        }
+
+        //2-查询用户信息
+        User user = userMapper.selectByPrimaryKey(id);
+        if(user == null || user.getDeleteState() == 1) {
+            //打印日志
+            log.warn(ResultCode.FAILED_USER_NOT_EXISTS.toString());
+            //抛出异常
+            throw new ApplicationException(AppResult.failed(ResultCode.FAILED_USER_NOT_EXISTS));
+        }
+
+        //3-封装待更新的数据
+        User updateUser = new User();
+        updateUser.setId(user.getId());
+        updateUser.setAvatarUrl(relativePathUrl);
+
+        //4-调用dao层
+        int row = userMapper.updateByPrimaryKeySelective(updateUser);
+        if(row != 1) {
+            log.warn(ResultCode.FAILED.toString() + ", 受影响的行数 != 1");
+            throw new ApplicationException(AppResult.failed(ResultCode.FAILED));
+        }
+    }
 }

@@ -22,7 +22,13 @@ public class AppConfig {
     public static final String RAW_EMAILCODE = "RAW_EMAILCODE";
 
     /**
-     * 过期时间
+     * 找回密码的临时session的过期时间
      */
     public static final Integer EXPIRE_SECONDS = 100;
+
+    /**
+     * 存储图片的绝对路径
+     */
+    public static final String ABSOLUTE_PATH = "D:\\ASSIGNMENT\\code\\forum\\forum\\upload\\";
+
 }

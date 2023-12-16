@@ -35,3 +35,6 @@ build/
 ### yml ###
 *.yml
 application.yml
+
+### upload ###
+/upload/

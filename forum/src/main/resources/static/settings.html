@@ -30,18 +30,21 @@
             <h2 id="settings_nickname" class="mb-4"></h2>
             <input type="text" style="display: none;" id="settings_user_id">
             <div class="row align-items-center">
-              <div class="col-auto">
-                <a id="settings_avatar" class="avatar avatar-xl" style="background-image: url(./image/avatar02.jpeg)"
-                  onclick="openFileDialog()"></a>
-                <!-- 文件选择 -->
-                <input type="file" class="form-control" style="display: none;" id="settings_input_chooiceAvatar">
-              </div>
 
-              <div class="col-auto"><a href="javascript:void(0);" class="btn" onclick="openFileDialog()">
-                  修改头像
-                </a>
 
-              </div>
+
+                <div class="col-auto" >
+                  <a id="settings_avatar" class="avatar avatar-xl" style="background-image: url(./image/avatar01.jpeg)" onclick="openFileDialog()"></a>
+                  <!-- 文件选择 -->
+                  <input type="file" class="form-control" style="display: none;" id="chooseAvatar">
+                </div>
+
+                <div class="col-auto" >
+                  <a href="javascript:void(0);" class="btn" onclick="openFileDialog()">修改头像</a>
+                </div>
+
+
+
             </div>
             <h3 class="card-title mt-4">昵称</h3>
             <div class="row">
@@ -319,9 +322,37 @@
   }
 
   // ================= 处理选择头像事件 =================
-  function openFileDialog () {
-    // 触发选择文件按钮的点击事件
-    $('#settings_input_chooiceAvatar').click();
+  function openFileDialog() {
+    $('#chooseAvatar').click();
+
+    $('#chooseAvatar').change(function() {
+      const selectedFile = this.files[0];
+      const formData = new FormData();
+      formData.append('myphoto', selectedFile);
+
+      $.ajax({
+        url: '/user/sub_photo',
+        type: 'POST',
+        data: formData,
+        processData: false,
+        contentType: false,
+        //回调
+        success: function (respData) {
+          if (respData.code == 0) {
+            //刷新网页
+
+            location.href = location.href;
+          } else {
+            //提示信息
+            $.toast({
+              heading: 'Warning',
+              text: respData.message,
+              icon: 'warning'
+            })
+          }
+        }
+      });
+  })
   }
 
   // ================= 修改用户昵称 =================
