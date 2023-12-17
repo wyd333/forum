@@ -37,7 +37,7 @@
         </button>
         <!-- 导航左侧 logo 按钮 -->
         <h1 class="navbar-brand navbar-brand-autodark d-none-navbar-horizontal pe-0 pe-md-3">
-          <a href="#">
+          <a href="index.html">
             <img src="./image/fox-forum-logo.png" width="32" height="32" alt="Tabler" class="navbar-brand-image me-3">
           </a>
         </h1>
@@ -56,7 +56,7 @@
                       <path d="M21 21l-6 -6" />
                     </svg>
                   </span>
-                  <input type="text" value="" class="form-control" placeholder="输入关键字..."
+                  <input type="text" value="" class="form-control" id="searchInput" placeholder="输入关键字..."
                     aria-label="Search in website">
                 </div>
               </form>
@@ -154,7 +154,7 @@
     <!-- 正文 开始 -->
     <div class="page-wrapper" id="page-wrapper">
       <!-- 正文部分动态加载 -->
-      <div id="bit-forum-content">
+      <div id="fox-forum-content">
           <!--动态添加HTML代码片段 Ajax异步刷新-->
       </div>
       
@@ -308,6 +308,53 @@
 <script src="./dist/libs/tinymce/tinymce.min.js" defer></script>
 <script>
   $(function () {
+
+    //========================= 搜索框 =======================
+    $('#searchInput').on('keypress', function (e) {
+      if (e.which === 13) { // 按下回车键的键码是13
+        e.preventDefault(); // 阻止表单默认提交行为
+        let keyword = $(this).val(); // 获取输入的关键字
+        // alert(keyword);
+        if(keyword === '') {
+          location.assign("index.html");
+          return;
+        }
+        // 发起 AJAX 请求
+        $.ajax({
+          url: '/article/keyword',
+          method: 'get',
+          contentType: 'application/x-www-form-urlencoded',
+          data: {
+            keyword: keyword
+          },
+          //回调
+          success: function (respData) {
+            if(respData.code == 0) {
+              console.log(respData.data);
+              // 在成功响应中跳转到 keyword_articles.html 并传递数据
+              window.location.href = 'index.html?data=' + encodeURIComponent(JSON.stringify(respData.data));
+            }else{
+              //提示信息
+              $.toast({
+                heading: 'Warning',
+                text: respData.message,
+                icon: 'warning'
+              });
+            }
+          },
+          error: function (){
+            //http访问出现错误
+            $.toast({
+              heading: 'Error',
+              text: '出现问题，请与管理员联系',
+              icon: 'error'
+            });
+          }
+        });
+      }
+    });
+
+
     //========================= 获取用户信息 =======================
     // 成功后，手动设置用户信息
     $.ajax({
@@ -432,7 +479,7 @@
     $('#index_user_settings').click(function () {
       console.log('加载设置中心页面');
       removeNavActive();
-      $('#bit-forum-content').load('settings.html');
+      $('#fox-forum-content').load('settings.html');
     });
 
     // ============================ 处理个人中心点击事件 ===========================
@@ -442,7 +489,7 @@
       // 清空要查看的用户Id，表示要查看的是自己
       profileUserId = undefined;
       // 加载个人帖子列表
-      $('#bit-forum-content').load('profile.html');
+      $('#fox-forum-content').load('profile.html');
     });
 
     // ============================ 处理退出登录点击事件 ===========================

@@ -349,4 +349,12 @@ public class ArticleController {
         List<Article> articles = articleService.selectByUserId(userId);
         return AppResult.success(articles);
     }
+
+    @ApiOperation("根据关键字获取用户的帖子列表")
+    @GetMapping("/keyword")
+    public AppResult<List<Article>> getByKeyword(@ApiParam("关键词") @RequestParam("keyword") @NonNull String keyword) {
+        //1-调用service
+        List<Article> articleList = articleService.selectByKeyWord(keyword);
+        return AppResult.success(articleList);
+    }
 }

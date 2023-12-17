@@ -364,7 +364,7 @@
           if (article.userId == currentUserId) {
             profileUserId = undefined;
           }
-          $('#bit-forum-content').load('profile.html');
+          $('#fox-forum-content').load('profile.html');
         });
 
     }
@@ -483,7 +483,7 @@
         replyUserProfileBtn.click(function () {
           // 设置要查看用户的Id
           profileUserId = articleReply.user.id;
-          $('#bit-forum-content').load('profile.html');
+          $('#fox-forum-content').load('profile.html');
         });
         // 添加到回复区
         replyArea.append(replyItem);
@@ -499,40 +499,40 @@
 
     // ====================== 处理点赞 ======================
     $('#details_btn_like_count').click(function () {
-      $.ajax({
-        url: 'article/thumbs_up?id=' + currentArticle.id,
-        type: 'post',
-        //回调
-        success: function (respData) {
-          if(respData.code == 0) {
-            //成功
-            currentArticle.likeCount = currentArticle.likeCount+1;
-            //设置页面的值
-            $('#details_article_likeCount').html(currentArticle.likeCount);
-            //提示
+        $.ajax({
+          url: 'article/thumbs_up?id=' + currentArticle.id,
+          type: 'post',
+          //回调
+          success: function (respData) {
+            if (respData.code == 0) {
+              //成功
+              currentArticle.likeCount = currentArticle.likeCount + 1;
+              //设置页面的值
+              $('#details_article_likeCount').html(currentArticle.likeCount);
+              //提示
+              $.toast({
+                heading: 'Success',
+                text: '点赞成功！',
+                icon: 'success'
+              });
+            } else {
+              //失败
+              //提示信息
+              $.toast({
+                heading: 'Warning',
+                text: respData.message,
+                icon: 'warning'
+              });
+            }
+          },
+          error: function () {
             $.toast({
-              heading: 'Success',
-              text: '点赞成功！',
-              icon: 'success'
-            });
-          }else{
-            //失败
-            //提示信息
-            $.toast({
-              heading: 'Warning',
-              text: respData.message,
-              icon: 'warning'
+              heading: 'Error',
+              text: '出现问题，请与管理员联系',
+              icon: 'error'
             });
           }
-        },
-        error: function (){
-          $.toast({
-            heading: 'Error',
-            text: '出现问题，请与管理员联系',
-            icon: 'error'
-          });
-        }
-      });
+        });
     });
 
     // ====================== 回复帖子 ======================
@@ -640,7 +640,7 @@
     $('#details_artile_edit').click(function () {
       console.log('开始编辑');
       removeNavActive();
-      $('#bit-forum-content').load('article_edit.html');
+      $('#fox-forum-content').load('article_edit.html');
     });
   });
 </script>

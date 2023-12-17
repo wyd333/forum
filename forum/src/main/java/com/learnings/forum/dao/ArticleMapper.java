@@ -64,6 +64,11 @@ public interface ArticleMapper {
      */
     List<Article> selectByUserId(@Param("userId") Long userId);
 
-
+    /**
+     * 根据关键词模糊查询
+     * @param keyword 关键词
+     * @return 帖子列表
+     */
+    List<Article> selectByKeyWord(@Param("keyword")String keyword);
 
 }

@@ -3,7 +3,7 @@ let avatarUrl = 'image/avatar01.jpeg'; // 默认头像
 let currentArticle; // 当前访问的帖子
 let currentUserId;  // 当前登录用户
 let profileUserId;  // 查看个人信息
-
+let keywordArticles;
 
 
 // ============================ 处理导航激活效果 ===========================
@@ -31,7 +31,7 @@ function removeNavActive () {
 //======================= 处理导航栏点击并获取帖子列表 ======================
 function buildArticleList (){
   console.log('发送请求查询帖子列表');
-  $('#bit-forum-content').load('article_list.html');
+  $('#fox-forum-content').load('article_list.html');
 }
 
 // 设置站内信接收用户信息

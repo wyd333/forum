@@ -327,4 +327,13 @@ public class ArticleServiceImpl implements IArticleService {
             throw new ApplicationException(AppResult.failed(ResultCode.ERROR_SERVICES));
         }
     }
+
+    @Override
+    public List<Article> selectByKeyWord(String keyword) {
+        if(keyword == null) {
+            throw new ApplicationException(AppResult.failed(ResultCode.FAILED_PARAMS_VALIDATE));
+        }
+
+        return articleMapper.selectByKeyWord(keyword);
+    }
 }

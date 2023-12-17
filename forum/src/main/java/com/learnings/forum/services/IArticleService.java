@@ -98,4 +98,11 @@ public interface IArticleService {
      */
     void addOneReplyCountById(Long id);
 
+
+    /**
+     * 根据关键词模糊查询
+     * @param keyword 关键词
+     * @return 帖子列表
+     */
+    List<Article> selectByKeyWord(String keyword);
 }

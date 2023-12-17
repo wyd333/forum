@@ -110,4 +110,10 @@ class ArticleServiceImplTest {
         List<Article> articleList = articleService.selectAllWithPsize(2, 1);
         System.out.println(objectMapper.writeValueAsString(articleList));
     }
+
+    @Test
+    void selectByKeyWord() throws JsonProcessingException {
+        List<Article> articleList = articleService.selectByKeyWord("测试");
+        System.out.println(objectMapper.writeValueAsString(articleList));
+    }
 }

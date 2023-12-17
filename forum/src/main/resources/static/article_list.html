@@ -96,8 +96,31 @@
   totalpage = 1;  //总共多少页
 
 
-  $(function () {
 
+  $(function () {
+    // 获取 URL 中的查询结果数据
+    const urlParams = new URLSearchParams(window.location.search);
+    const jsonData = urlParams.get('data');
+
+    // 解析 JSON 数据并展示在页面上
+    const articleList = JSON.parse(decodeURIComponent(jsonData));
+
+    // ========================= 展示keywordArticles信息 =======================
+    function showKeyWordArticles(){
+      // 如果存在数据，则将其解析为对象数组
+      if (jsonData) {
+        // 找到要清空内容的元素
+        const articalItemsBody = $('#artical-items-body');
+
+        // 设置该元素的 HTML 内容为空字符串，清空内容
+        articalItemsBody.innerHTML = '';
+        // 在这里使用搜索结果数据，例如显示在页面上或进行其他操作
+        console.log(articleList);
+        listBuildArticleList(articleList);
+      } else {
+        console.log('No search result data available.');
+      }
+    }
     // ========================= 获取版块下帖子信息 =======================
     // 获取当前选中的版块
     let activeLiEl = $('#topBoardList>.active');
@@ -155,10 +178,14 @@
       });
     }
 
+
     // ========================= 获取帖子列表 =======================
     // 成功后，调用listBuildArticleList()方法，构建帖子列表
-
     function init() {
+      if(jsonData) {
+        showKeyWordArticles();
+        return;
+      }
       // 1-处理分页参数
       psize = getParamValue("psize");
       if (psize == null) {   // 如果url中没传每条的页数
@@ -233,7 +260,6 @@
       }
       return null;
     }
-
 
     // ========================= 构造帖子列表 =======================
     function listBuildArticleList(data) {
@@ -344,7 +370,7 @@
           // 通过全局变量保存当前访问的帖子信息
           currentArticle = article;
           removeNavActive();
-          $('#bit-forum-content').load('details.html');
+          $('#fox-forum-content').load('details.html');
         });
         // 添加到列表
         $('#artical-items-body').append(articleItem);
@@ -355,7 +381,7 @@
     $('.article_post').click(function () {
       console.log('加载发贴页面');
       removeNavActive();
-      $('#bit-forum-content').load('article.html');
+      $('#fox-forum-content').load('article.html');
     });
 
   });
