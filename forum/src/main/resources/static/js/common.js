@@ -5,6 +5,7 @@ let currentUserId;  // 当前登录用户
 let profileUserId;  // 查看个人信息
 
 
+
 // ============================ 处理导航激活效果 ===========================
 function changeNavActive (boardItem) {
     // 判断当前是否为激活状态

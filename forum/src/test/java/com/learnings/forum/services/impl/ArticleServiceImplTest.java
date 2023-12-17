@@ -13,7 +13,7 @@ import java.util.List;
 
 /**
  * Created with IntelliJ IDEA.
- * Description: 文章service测试类
+ * Description: 帖子service测试类
  * User: 12569
  * Date: 2023-11-02
  * Time: 22:51
@@ -97,5 +97,17 @@ class ArticleServiceImplTest {
     void selectByUserId() throws JsonProcessingException {
         List<Article> articles = articleService.selectByUserId(8L);
         System.out.println(objectMapper.writeValueAsString(articles));
+    }
+
+    @Test
+    void selectAllByBoardIdWithPsize() throws JsonProcessingException {
+        List<Article> articles = articleService.selectAllByBoardIdWithPsize(1L, 1, 2);
+        System.out.println(objectMapper.writeValueAsString(articles));
+    }
+
+    @Test
+    void selectAllWithPsize() throws JsonProcessingException {
+        List<Article> articleList = articleService.selectAllWithPsize(2, 1);
+        System.out.println(objectMapper.writeValueAsString(articleList));
     }
 }

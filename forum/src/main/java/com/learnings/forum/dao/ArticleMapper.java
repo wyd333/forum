@@ -27,11 +27,28 @@ public interface ArticleMapper {
     List<Article> selectAll();
 
     /**
-     * 根据板块id查询帖子列表
-     * @param boardId 板块id
+     * 分页查询版-查询所有帖子列表
      * @return
      */
+    List<Article> selectAllWithPsize(@Param("psize") Integer psize, @Param("offset") Integer offset);
+
+    /**
+     * 根据板块id查询帖子列表
+     * @param boardId 板块id
+     * @return 该板块下的帖子列表
+     */
     List<Article> selectAllByBoardId(@Param("boardId") Long boardId);
+
+    /**
+     * 分页查询版-根据板块id查询帖子列表
+     * @param boardId 版块id
+     * @param psize 每页帖子数
+     * @param offset 偏移量
+     * @return 该板块下的帖子列表
+     */
+    List<Article> selectAllByBoardIdWithPsize(@Param("boardId") Long boardId,
+                                              @Param("psize") Integer psize,
+                                              @Param("offset") Integer offset);
 
     /**
      * 根据帖子id查询详情
@@ -46,5 +63,7 @@ public interface ArticleMapper {
      * @return 帖子列表
      */
     List<Article> selectByUserId(@Param("userId") Long userId);
+
+
 
 }

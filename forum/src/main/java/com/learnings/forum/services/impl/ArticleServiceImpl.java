@@ -99,8 +99,13 @@ public class ArticleServiceImpl implements IArticleService {
     @Override
     public List<Article> selectAll() {
         // 调用dao
-        List<Article> articles = articleMapper.selectAll();
-        return articles;
+        return articleMapper.selectAll();
+    }
+
+    @Override
+    public List<Article> selectAllWithPsize(Integer psize, Integer offset) {
+        // 调用dao
+        return articleMapper.selectAllWithPsize(psize, offset);
     }
 
     @Override
@@ -119,9 +124,28 @@ public class ArticleServiceImpl implements IArticleService {
         }
 
         //3-调用dao，查询
-        List<Article> articles = articleMapper.selectAllByBoardId(boardId);
+        return articleMapper.selectAllByBoardId(boardId);
+    }
 
-        return articles;
+    @Override
+    public List<Article> selectAllByBoardIdWithPsize(Long boardId, Integer psize, Integer offset) {
+        //1-非空校验
+        if(boardId == null || boardId <= 0
+                || psize == null
+                || offset == null) {
+            log.warn(ResultCode.FAILED_PARAMS_VALIDATE.toString());
+            throw new ApplicationException(AppResult.failed(ResultCode.FAILED_PARAMS_VALIDATE));
+        }
+
+        //2-校验板块是否存在
+        Board board = boardService.selectById(boardId);
+        if(board == null) {
+            log.warn(ResultCode.FAILED_BOARD_NOT_EXISTS.toString() + ", boardId = " + boardId);
+            throw new ApplicationException(AppResult.failed(ResultCode.FAILED_BOARD_NOT_EXISTS));
+        }
+
+        //3-调用dao，查询
+        return articleMapper.selectAllByBoardIdWithPsize(boardId,psize,offset);
     }
 
     @Override
@@ -150,7 +174,7 @@ public class ArticleServiceImpl implements IArticleService {
             log.warn(ResultCode.FAILED_PARAMS_VALIDATE.toString());
             throw new ApplicationException(AppResult.failed(ResultCode.FAILED_PARAMS_VALIDATE));
         }
-        //2-调用DAO，获得文章详情
+        //2-调用DAO，获得帖子详情
         Article article = articleMapper.selectDetailById(id);
         //3-校验查询结果
         if(article == null) {

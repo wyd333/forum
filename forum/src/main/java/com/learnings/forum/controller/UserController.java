@@ -31,6 +31,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Date;
 import java.util.UUID;
 
 /**
@@ -343,7 +344,7 @@ public class UserController {
     @ApiOperation("修改用户头像")
     @PostMapping("/sub_photo")
     public AppResult updatePhoto(HttpServletRequest request,
-                                  @ApiParam("图片参数") @NonNull @RequestPart("myphoto") MultipartFile photo) {
+                                  @ApiParam("图片参数") @NonNull @RequestPart("myphoto") MultipartFile photo) throws IOException {
 
         // 1-要上传的文件名
         String originalFileName = photo.getOriginalFilename();
@@ -381,19 +382,17 @@ public class UserController {
             System.out.println(b);
         }
 
-        try {
-            // 7-生成文件
-            //将上传文件绝对路径保存到服务器文件系统
-            Files.write(filePath, photo.getBytes());
+        // 7-生成文件
+        //将上传文件绝对路径保存到服务器文件系统
+        Files.write(filePath, photo.getBytes());
 
-            //保存图片相对路径到数据库中
-            userService.modifyAvatar(user.getId(), relativePathUrl);
+        //保存图片相对路径到数据库中
+        userService.modifyAvatar(user.getId(), relativePathUrl);
 
-            user.setAvatarUrl(relativePathUrl);
-            session.setAttribute(AppConfig.USER_SESSION, user);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        user.setAvatarUrl(relativePathUrl);
+        user.setUpdateTime(new Date());
+        session.setAttribute(AppConfig.USER_SESSION, user);
+
         System.out.println("新头像的地址：" + user.getAvatarUrl());
         //将图片相对路径返回给前端
         return AppResult.success(user);

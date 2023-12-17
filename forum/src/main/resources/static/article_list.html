@@ -1,4 +1,5 @@
 <!-- Page header -->
+
 <div class="page-header d-print-none">
   <div class="container-xl">
     <div class="row g-2 align-items-center">
@@ -58,19 +59,56 @@
     </div>
   </div>
   <!-- 正文 结束 -->
+  <div class="blog-pagnation-wrapper" style="text-align: center; margin: 10px">
+    <style>
+      .blog-pagnation-item {
+        padding: 6px 12px;
+        background-color: rgb(247, 144, 75);
+        color: white;
+        border: none;
+        border-radius: 6px;
+        margin: 2px;
+        cursor: pointer;
+        font-size: 10px;
+      }
+      .blog-pagnation-item:hover {
+        background-color: rgba(247, 144, 75, 0.5);
+      }
+    </style>
+
+    <button class="blog-pagnation-item" onclick="doFirst()"><strong>首页</strong></button>
+    <button class="blog-pagnation-item" onclick="doBefore()"><strong>上一页</strong></button>
+    &nbsp;&nbsp;
+    <strong>当前在第 <span id="pindex">1</span> 页，共 <span id="totalpage">1</span> 页</strong>
+    &nbsp;&nbsp;
+    <button class="blog-pagnation-item" onclick="doNext()"><strong>下一页</strong></button>
+    <button class="blog-pagnation-item" onclick="doLast()"><strong>末页</strong></button>
+
+
+  </div>
+
+
+
 </div>
 <script>
+  psize = 10;  //每条显示的页数
+  pindex = 1; //页码
+  totalpage = 1;  //总共多少页
+
+
   $(function () {
+
     // ========================= 获取版块下帖子信息 =======================
     // 获取当前选中的版块
     let activeLiEl = $('#topBoardList>.active');
     // 构造query string
-    let queryString = '';
     let boardData = activeLiEl.data('board');
     // 导航栏版块Item是否绑定版块数据
+    let currentBoardId;
+
     if (boardData) {
-      // 构造query string 
-      queryString = '?boardId=' + boardData.id;
+      // 构造query string
+      currentBoardId = boardData.id;
       // 获取版块信息
       getBoardInfo(boardData.id);
     } else {
@@ -78,6 +116,7 @@
       $('#article_list_board_title').html('首页');
       $('#article_list_count_board').hide();
     }
+
 
     // ========================= 获取版块信息 =======================
     // 
@@ -118,33 +157,83 @@
 
     // ========================= 获取帖子列表 =======================
     // 成功后，调用listBuildArticleList()方法，构建帖子列表
-    $.ajax({
-      url: 'article/get_list_by_board_id' + queryString,
-      type: 'get',
-      //回调
-      success: function (respData) {
-        if(respData.code == 0) {
-          //成功
-          listBuildArticleList(respData.data);
-        }else{
-          //失败
-          //提示信息
+
+    function init() {
+      // 1-处理分页参数
+      psize = getParamValue("psize");
+      if (psize == null) {   // 如果url中没传每条的页数
+        psize = 10;
+      }
+      pindex = getParamValue("pindex");
+      if (pindex == null) {
+        pindex = 1;
+      }
+      $("#pindex").html(pindex);
+
+      // 2-请求后端接口
+      $.ajax({
+        url: 'article/get_list_by_boardId_psize',
+        type: 'get',
+        data: {
+          'boardId': currentBoardId,
+          'psize': psize,
+          'pindex': pindex
+        },
+        //回调
+        success: function (respData) {
+          if (respData.code == 0) {
+            //成功
+            let articles = respData.data.articles;
+            totalpage = respData.data.size;
+            $('#totalpage').html(totalpage);
+
+            listBuildArticleList(articles);
+          } else {
+            //失败
+            //提示信息
+            $.toast({
+              heading: 'Warning',
+              text: respData.message,
+              icon: 'warning'
+            });
+          }
+        },
+        error: function () {
           $.toast({
-            heading: 'Warning',
-            text: respData.message,
-            icon: 'warning'
+            heading: 'Error',
+            text: '出现问题，请与管理员联系',
+            icon: 'error'
           });
         }
-      },
-      error: function (){
-        $.toast({
-          heading: 'Error',
-          text: '出现问题，请与管理员联系',
-          icon: 'error'
-        });
-      }
+      });
+    }
 
-    });
+    init();
+
+    // 根据 key 获取 url 中对应的 value
+    function getParamValue(key) {
+      // 1-得到url的参数部分
+      let params = location.search;
+
+      // 2-去除"?"
+      if(params.indexOf("?") >= 0) {  //存在问号"?"
+        params = params.substring(1);   //从第一位开始截取，直到末尾
+        // 3-根据"&"分割成多个数组
+        let paramArray = params.split("&");
+        // 4-循环对比 key，并返回查询的 value
+        if(paramArray.length >= 1){
+          for (let i = 0; i < paramArray.length; i++) {
+            // key=value
+            let item = paramArray[i].split("=");
+            if(key == item[0]) {
+              return item[1];
+            }
+          }
+        }
+      }
+      return null;
+    }
+
 
     // ========================= 构造帖子列表 =======================
     function listBuildArticleList(data) {
@@ -262,7 +351,7 @@
       });
     }
 
-    // ================== 处理发贴事件 =====================
+    // ================== 处理发帖事件 =====================
     $('.article_post').click(function () {
       console.log('加载发贴页面');
       removeNavActive();
@@ -270,4 +359,61 @@
     });
 
   });
+  function doFirst() {
+    // 1-判断是否在首页
+    if(pindex <= 1) {
+      $.toast({
+        heading: 'Warning',
+        text: '已在首页！',
+        icon: 'warning'
+      });
+      pindex = 1;
+      return false;
+    }
+    // 2-不在首页，跳转到首页
+    location.href = "index.html?pindex=" + 1 + "&psize=" + psize;
+  }
+
+  function doLast() {
+    // 1-判断是否在末页
+    if(pindex >= totalpage) {
+      $.toast({
+        heading: 'Warning',
+        text: '已在末页！',
+        icon: 'warning'
+      });
+      pindex = totalpage;
+      return false;
+    }
+    // 2-不在首页，跳转到首页
+    location.href = "index.html?pindex="+ totalpage + "&psize=" + psize;
+  }
+
+  function doBefore(){
+    // 1-判断是否在首页
+    if(pindex <= 1) {
+      $.toast({
+        heading: 'Warning',
+        text: '已在首页！',
+        icon: 'warning'
+      });
+      pindex = 1;
+      return false;
+    }
+    location.href = "index.html?pindex=" + (parseInt(pindex)-1) + "&psize=" + psize;
+  }
+
+  function doNext() {
+    // 1-判断是否在末页
+    if(pindex >= totalpage) {
+      $.toast({
+        heading: 'Warning',
+        text: '已在末页！',
+        icon: 'warning'
+      });
+      pindex = totalpage;
+      return false;
+    }
+    location.href = "index.html?pindex=" + (parseInt(pindex)+1) + "&psize=" + psize;
+  }
 </script>

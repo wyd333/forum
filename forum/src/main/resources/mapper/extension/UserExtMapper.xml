@@ -18,7 +18,7 @@
         username = #{username,jdbcType=VARCHAR}
     </select>
 
-<!--    根据用户id查询用户的总文章数-->
+<!--    根据用户id查询用户的总帖子数-->
     <select id="selectArticleCountById" resultType="java.lang.Integer" parameterType="java.lang.Long">
         SELECT articleCount
         FROM t_user

@@ -1,9 +1,13 @@
 package com.learnings.forum.services;
 
 import com.learnings.forum.model.Article;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.FutureTask;
 
 /**
  * Created with IntelliJ IDEA.
@@ -25,11 +29,27 @@ public interface IArticleService {
     List<Article> selectAll();
 
     /**
+     * 分页查询版-查询所有帖子列表
+     * @return
+     */
+    List<Article> selectAllWithPsize(Integer psize, Integer offset);
+
+
+    /**
      * 根据板块id查询帖子列表
      * @param boardId 板块id
      * @return
      */
     List<Article> selectAllByBoardId(Long boardId);
+
+    /**
+     * 分页查询版-根据板块id查询帖子列表
+     * @param boardId 版块id
+     * @param psize 每页帖子数
+     * @param offset 偏移量
+     * @return 该板块下的帖子列表
+     */
+    List<Article> selectAllByBoardIdWithPsize(Long boardId,Integer psize,Integer offset);
 
     /**
      * 根据用户id查询帖子列表
