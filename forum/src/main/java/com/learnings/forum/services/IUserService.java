@@ -1,6 +1,7 @@
 package com.learnings.forum.services;
 
 import com.learnings.forum.model.User;
+import org.apache.ibatis.annotations.Param;
 
 /**
  * Created with IntelliJ IDEA.
@@ -77,5 +78,21 @@ public interface IUserService {
      * @param relativePathUrl 头像的相对路径
      */
     void modifyAvatar(Long id, String relativePathUrl);
+
+
+    /**
+     * 查询用户发帖总数
+     * @param id 用户id
+     * @return 用户发帖总数
+     */
+    Integer selectArticleCountById(Long id);
+
+
+    /**
+     * 查询用户获赞总数
+     * @param id 用户id
+     * @return 用户获赞总数
+     */
+    Integer selectAllLikesCountById(Long id);
 
 }

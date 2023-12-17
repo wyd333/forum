@@ -426,4 +426,48 @@ public class UserServiceImpl implements IUserService {
             throw new ApplicationException(AppResult.failed(ResultCode.FAILED));
         }
     }
+
+    @Override
+    public Integer selectArticleCountById(Long id) {
+        //1-非空校验
+        if(id == null || id <= 0) {
+            //打印日志
+            log.warn(ResultCode.FAILED_PARAMS_VALIDATE.toString());
+            //抛出异常
+            throw new ApplicationException(AppResult.failed(ResultCode.FAILED_PARAMS_VALIDATE));
+        }
+
+        //2-查询信息
+        Integer articleCount = userMapper.selectArticleCountById(id);
+        if(articleCount == null) {
+            //打印日志
+            log.warn(ResultCode.FAILED_PARAMS_VALIDATE.toString());
+            //抛出异常
+            throw new ApplicationException(AppResult.failed(ResultCode.FAILED_PARAMS_VALIDATE));
+        }
+
+        return articleCount;
+    }
+
+    @Override
+    public Integer selectAllLikesCountById(Long id) {
+        //1-非空校验
+        if(id == null || id <= 0) {
+            //打印日志
+            log.warn(ResultCode.FAILED_PARAMS_VALIDATE.toString());
+            //抛出异常
+            throw new ApplicationException(AppResult.failed(ResultCode.FAILED_PARAMS_VALIDATE));
+        }
+
+        //2-查询信息
+        Integer likeCount = userMapper.selectAllLikesCountById(id);
+        if(likeCount == null) {
+            //打印日志
+            log.warn(ResultCode.FAILED_PARAMS_VALIDATE.toString());
+            //抛出异常
+            throw new ApplicationException(AppResult.failed(ResultCode.FAILED_PARAMS_VALIDATE));
+        }
+
+        return likeCount;
+    }
 }

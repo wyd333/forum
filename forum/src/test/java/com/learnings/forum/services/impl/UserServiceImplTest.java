@@ -105,8 +105,19 @@ class UserServiceImplTest {
     }
 
     @Test
+    @Transactional
     void modifyAvatar() {
         userService.modifyAvatar(8L, "path123");
         System.out.println("ok!");
+    }
+
+    @Test
+    void selectArticleCountById() {
+        System.out.println(userService.selectArticleCountById(5L));
+    }
+
+    @Test
+    void selectAllLikesCountById() {
+        System.out.println(userService.selectAllLikesCountById(8L));
     }
 }

@@ -17,4 +17,22 @@ public interface UserMapper {
     int updateByPrimaryKey(User row);
 
     User selectByUserName(@Param("username") String username);
+
+    /**
+     * 查询用户发帖总数
+     * @param id 用户id
+     * @return 用户发帖总数
+     */
+    Integer selectArticleCountById(@Param("id") Long id);
+
+    /**
+     * 查询用户获赞总数
+     * @param id 用户id
+     * @return 用户获赞总数
+     */
+    Integer selectAllLikesCountById(@Param("id") Long id);
+
+
+
+
 }

@@ -3,25 +3,32 @@ package com.learnings.forum.controller;
 import com.learnings.forum.common.AppResult;
 import com.learnings.forum.common.ResultCode;
 import com.learnings.forum.config.AppConfig;
+import com.learnings.forum.config.ThreadPoolConfig;
 import com.learnings.forum.exception.ApplicationException;
 import com.learnings.forum.model.Article;
 import com.learnings.forum.model.Board;
 import com.learnings.forum.model.User;
+import com.learnings.forum.model.vo.ArticleVO;
 import com.learnings.forum.services.IArticleService;
 import com.learnings.forum.services.IBoardService;
+import com.learnings.forum.services.IUserService;
 import com.sun.istack.internal.NotNull;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.FutureTask;
 
 /**
  * Created with IntelliJ IDEA.
@@ -41,6 +48,11 @@ public class ArticleController {
     private IArticleService articleService;
     @Resource
     private IBoardService boardService;
+    @Resource
+    private IUserService userService;
+
+    @Resource
+    private ThreadPoolTaskExecutor taskExecutor;    //并发编程
     /**
      * 发布新帖
      * @param boardId 板块id
@@ -112,12 +124,11 @@ public class ArticleController {
 
     @ApiOperation("根据帖子Id获取详情")
     @GetMapping("/details")
-    public AppResult<Article> getDetails(HttpServletRequest request,
-            @ApiParam("帖子Id") @RequestParam("id") @NotNull Long id){
+    public AppResult<ArticleVO> getDetails(HttpServletRequest request,
+                                           @ApiParam("帖子Id") @RequestParam("id") @NotNull Long id) throws ExecutionException, InterruptedException {
         //**从session中获取当前登录的用户
         HttpSession session = request.getSession(false);
         User user = (User) session.getAttribute(AppConfig.USER_SESSION);
-
 
         //1-调用service获取帖子详情
         Article article = articleService.selectDetailById(id);
@@ -126,13 +137,35 @@ public class ArticleController {
             return AppResult.failed(ResultCode.FAILED_NOT_EXISTS);
         }
 
+        //3-根据作者id查询文章作者的获赞总数
+        FutureTask<Integer> likeCountTask = new FutureTask<>(() -> {
+            // todo: 调用service
+            return userService.selectAllLikesCountById(article.getUserId());
+        });
+        taskExecutor.submit(likeCountTask);
+
+        //4-根据user id查询文章作者发表的总文章数
+        FutureTask<Integer> articleCountTask = new FutureTask<>(() -> {
+            // todo: 调用service
+            return userService.selectArticleCountById(article.getUserId());
+        });
+        taskExecutor.submit(articleCountTask);
+
         //**判断当前用户是否为作者
         if(user.getId().equals(article.getUserId())) {
             // 标识为作者
             article.setOwn(true);
         }
+
+        //5-组装数据
+        int likeCount = likeCountTask.get();   // 等待任务（线程池）执行完成
+        int articleCount = articleCountTask.get();  // 等待任务（线程池）执行完成
+
+        ArticleVO articleVO = new ArticleVO(likeCount, articleCount, article);
+
+
         //3-返回结果
-        return AppResult.success(article);
+        return AppResult.success(articleVO);
     }
 
     @ApiOperation("编辑文章内容")

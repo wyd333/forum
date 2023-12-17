@@ -73,6 +73,27 @@
             <span class="avatar avatar-xl mb-3 rounded" style="background-image: url(./image/avatar01.jpeg)"
               id="article_details_author_avatar"></span>
             <h3 class="m-0 mb-1"><a href="javascript:void(0);" id="article_details_author_name"></a></h3>
+
+            <div style="display: inline-block; margin-right: 20px; padding: 10px; text-align: center;">
+              <div>
+                <span><strong>文章</strong></span>
+              </div>
+              <div>
+                <span id="article_count">0</span>
+              </div>
+            </div>
+
+            <div style="display: inline-block; padding: 10px; text-align: center;">
+              <div>
+                <span><strong>获赞</strong></span>
+              </div>
+              <div>
+                <span id="like_count">0</span>
+              </div>
+            </div>
+
+
+
             <div style="margin-top: 10px;" id="div_details_send_message">
               <a href="javascript:void(0);" class="btn btn-primary" id="btn_details_send_message" data-bs-toggle="modal" data-bs-target="#index_message_modal">
                 <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-mail" width="24" height="24"
@@ -266,7 +287,14 @@
       success: function (respData) {
         if(respData.code == 0) {
           //成功
-          initArticleDetails(respData.data);
+          //将文章信息初始化到页面
+          let likeCount = respData.data.likeCount;
+          let articleCount = respData.data.articleCount;
+          let articleInfo = respData.data.article;
+          initArticleDetails(articleInfo);
+
+          $('#like_count').html(likeCount);
+          $('#article_count').html(articleCount);
         }else{
           //失败
           //提示信息
@@ -286,7 +314,7 @@
       }
     });
 
-    // ===================== 初始化页面内空 ======================
+    // ===================== 初始化页面内容 ======================
     function initArticleDetails(article) {
       // 设置当前操作的帖子为最新查询出来的值
       currentArticle = article;

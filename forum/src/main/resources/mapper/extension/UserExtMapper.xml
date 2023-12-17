@@ -18,4 +18,25 @@
         username = #{username,jdbcType=VARCHAR}
     </select>
 
+<!--    根据用户id查询用户的总文章数-->
+    <select id="selectArticleCountById" resultType="java.lang.Integer" parameterType="java.lang.Long">
+        SELECT articleCount
+        FROM t_user
+        WHERE
+        deleteState = 0
+        AND
+        id = #{id, jdbcType=BIGINT}
+    </select>
+
+
+<!--    根据用户id查询用户的总获赞数-->
+    <select id="selectAllLikesCountById" resultType="java.lang.Integer" parameterType="java.lang.Long">
+        select
+        SUM(a.likeCount)
+        from t_article a, t_user u
+        where a.userId = u.id
+        and a.deleteState = 0
+        and u.deleteState = 0
+        and u.id = #{id, jdbcType=BIGINT}
+    </select>
 </mapper>
