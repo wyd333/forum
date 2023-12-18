@@ -6,6 +6,7 @@ import com.learnings.forum.dao.UserMapper;
 import com.learnings.forum.exception.ApplicationException;
 import com.learnings.forum.model.User;
 import com.learnings.forum.services.IUserService;
+import com.learnings.forum.utils.CheckEmailUtil;
 import com.learnings.forum.utils.MD5Util;
 import com.learnings.forum.utils.StringUtil;
 import com.learnings.forum.utils.UUIDUtil;
@@ -37,6 +38,7 @@ public class UserServiceImpl implements IUserService {
         //1-非空校验
         if(user == null || StringUtil.isEmpty(user.getUsername())
                 || StringUtil.isEmpty(user.getNickname())
+                || StringUtil.isEmpty(user.getEmail())
                 || StringUtil.isEmpty(user.getPassword())
                 || StringUtil.isEmpty(user.getSalt())) {
             //打印日志

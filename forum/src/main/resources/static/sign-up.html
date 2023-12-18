@@ -45,6 +45,13 @@
             <input type="text" class="form-control" placeholder="请输入昵称" name="nickname" id="nickname">
             <div class="invalid-feedback">昵称不能为空</div>
           </div>
+
+          <!-- 邮箱 -->
+          <div class="mb-3">
+            <label class="form-label required">邮箱</label>
+            <input type="text" class="form-control" placeholder="请输入邮箱" name="nickname" id="email">
+            <div class="invalid-feedback">邮箱账号格式有误</div>
+          </div>
           <!-- 密码 -->
           <div class="mb-3">
             <label class="form-label required">密码</label>
@@ -90,7 +97,7 @@
           <div class="mb-3">
             <label class="form-check">
               <input type="checkbox" class="form-check-input" id="policy" />
-              <span class="form-check-label">同意 <a href="#" tabindex="-1">比特论坛使用条款和隐私政策</a>.</span>
+              <span class="form-check-label">同意 <a href="#" tabindex="-1">FoxForum论坛使用条款和隐私政策</a>.</span>
             </label>
           </div>
           <div class="form-footer">
@@ -126,6 +133,11 @@ $(function () {
       $('#nickname').addClass('is-invalid');
       checkForm = false;
     }
+    // 校验邮箱
+    if (!$('#email').val()) {
+      $('#email').addClass('is-invalid');
+      checkForm = false;
+    }
     // 校验密码非空
     if (!$('#password').val()) {
       $('#password').addClass('is-invalid');
@@ -151,6 +163,7 @@ $(function () {
     let postData = {
       username: $('#username').val(),
       nickname: $('#nickname').val(),
+      email: $('#email').val(),
       password: $('#password').val(),
       password_repeat: $('#passwordRepeat').val()
     };
@@ -200,6 +213,26 @@ $(function () {
   // 表单元单独检验
   $('#username, #nickname, #password').on('blur', function () {
     if ($(this).val()) {
+      $(this).removeClass('is-invalid');
+      $(this).addClass('is-valid');
+    } else {
+      $(this).removeClass('is-valid');
+      $(this).addClass('is-invalid');
+    }
+  })
+
+  // 邮箱格式验证函数
+  function validateEmail(email) {
+    // 邮箱验证的正则表达式
+    const regex = /^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$/;
+
+    // 检查邮箱格式是否正确
+    return regex.test(email);
+  }
+
+  // 邮箱格式检验
+  $('#email').on('blur', function () {
+    if ($(this).val() && validateEmail($('#email').val())) {
       $(this).removeClass('is-invalid');
       $(this).addClass('is-valid');
     } else {

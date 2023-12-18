@@ -24,7 +24,7 @@ public class AppConfig {
     /**
      * 找回密码的临时session的过期时间
      */
-    public static final Integer EXPIRE_SECONDS = 100;
+    public static final Integer EXPIRE_SECONDS = 300;
 
     /**
      * 存储图片的绝对路径

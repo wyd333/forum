@@ -4,13 +4,11 @@ import cn.hutool.system.UserInfo;
 import com.learnings.forum.common.AppResult;
 import com.learnings.forum.common.ResultCode;
 import com.learnings.forum.config.AppConfig;
+import com.learnings.forum.exception.ApplicationException;
 import com.learnings.forum.model.User;
 import com.learnings.forum.services.ISessionService;
 import com.learnings.forum.services.IUserService;
-import com.learnings.forum.utils.MD5Util;
-import com.learnings.forum.utils.SendEmailUtil;
-import com.learnings.forum.utils.StringUtil;
-import com.learnings.forum.utils.UUIDUtil;
+import com.learnings.forum.utils.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -71,6 +69,7 @@ public class UserController {
     @PostMapping("/register")
     public AppResult register(@ApiParam("用户名") @RequestParam("username") @NonNull String username,
                               @ApiParam("昵称") @RequestParam("nickname") @NonNull String nickname,
+                              @ApiParam("邮箱") @RequestParam("email") @NonNull String email,
                               @ApiParam("密码") @RequestParam("password") @NonNull String password,
                               @ApiParam("确认密码") @RequestParam("password_repeat") @NonNull String passwordRepeat){
         //1-校验密码与重复密码是否相同
@@ -80,10 +79,19 @@ public class UserController {
             return AppResult.failed(ResultCode.FAILED_TWO_PWD_NOT_SAME);
         }
 
-        //2-准备数据
+        //2-邮箱格式校验
+        if(!CheckEmailUtil.validateEmail(email)) {
+            //打印日志
+            log.warn(ResultCode.FAILED_PARAMS_VALIDATE.toString());
+            //抛出异常，统一抛出ApplicationException
+            throw new ApplicationException(AppResult.failed(ResultCode.FAILED_PARAMS_VALIDATE));
+        }
+
+        //3-准备数据
         User user = new User();
         user.setUsername(username);
         user.setNickname(nickname);
+        user.setEmail(email);
         //处理密码
             //生成盐
         String salt = UUIDUtil.UUID_32();
@@ -93,10 +101,10 @@ public class UserController {
         user.setSalt(salt);
         user.setAvatarUrl("upload/avatar01.jpeg");
 
-        //3-调用service层处理数据
+        //4-调用service层处理数据
         userService.createNormalUser(user);
 
-        //4-返回
+        //5-返回
         return AppResult.success();
     }
 
