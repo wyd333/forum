@@ -49,7 +49,7 @@
 | 开发工具           | IntelliJ IDEA Utimate 2022                                |
 | API文档生成工具    | Swagger<br />Springfox 3.0.0                              |
 | 单元测试工具       | Junit                                                     |
-| 接口测试工具       | Postman                                                   |
+| 接口测试工具       | Postman<br />Fiddler<br />Charles                         |
 | 自动化测试工具     | Chrome 19<br />Selenium                                   |
 
 ## 三、部分项目亮点展示
